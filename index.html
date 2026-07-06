@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Google Forms L1 智慧校園模擬練習器</title>
+    <title>Google Forms L1 智慧校園模擬練習器 | Simulador Google Forms L1</title>
     <!-- Tailwind CSS & FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -15,10 +15,10 @@
     <style>
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            /* 最佳化行動端點擊無延遲 */
+            /* 最佳化行動端點擊無延遲 / Otimização de clique sem atraso */
             touch-action: manipulation;
         }
-        /* 隱藏滾動條但保持功能 */
+        /* 隱藏滾動條但保持功能 / Ocultar barra de rolagem mas manter função */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -30,28 +30,42 @@
 </head>
 <body class="h-full bg-slate-950 text-slate-100 flex flex-col overflow-hidden select-none">
 
-    <!-- 頂部導航列 (投影清晰大字體 + 手機自適應) -->
-    <header class="bg-slate-900 border-b border-slate-800 px-4 md:px-8 py-4 md:py-5 flex items-center justify-between shrink-0 z-10">
+    <!-- 頂部導航列 (投影清晰大字體 + 手機自適應 + 雙語切換) -->
+    <!-- Barra de Navegação Superior (Adaptável + Seletor de Idioma) -->
+    <header class="bg-slate-900 border-b border-slate-800 px-4 md:px-8 py-4 md:py-5 flex items-center justify-between shrink-0 z-10 gap-3">
         <div class="flex items-center gap-3 md:gap-4">
             <div class="w-10 h-10 md:w-12 md:h-12 bg-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20 shrink-0">
                 <i class="fa-solid fa-file-invoice text-xl md:text-2xl text-white animate-pulse"></i>
             </div>
             <div>
-                <h1 class="text-xl md:text-3xl font-black tracking-wider text-white">
+                <h1 id="header-title" class="text-xl md:text-3xl font-black tracking-wider text-white">
                     Google Forms L1 <span class="text-purple-400">智慧校園模擬練習器</span>
                 </h1>
-                <p class="text-xs md:text-base text-slate-400 mt-0.5 md:mt-1">
+                <p id="header-subtitle" class="text-xs md:text-base text-slate-400 mt-0.5 md:mt-1">
                     全真雙向模擬狀態機 • 100% 免登入排雷實踐
                 </p>
             </div>
         </div>
-        <!-- 頂部進度條 (手機上隱藏，保留最大寬度) -->
-        <div class="hidden lg:flex items-center gap-4 bg-slate-800/80 px-6 py-3 rounded-2xl border border-slate-700/50">
-            <span class="text-base font-bold text-slate-300">防雷通關進度:</span>
-            <div class="w-48 bg-slate-950 rounded-full h-4 overflow-hidden p-0.5 border border-slate-700">
-                <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-indigo-500 h-full rounded-full transition-all duration-500" style="width: 16.6%"></div>
+
+        <div class="flex items-center gap-4 shrink-0">
+            <!-- 🌟 頂部雙語切換按鈕 / Seletor de Idiomas -->
+            <div class="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800">
+                <button onclick="setLanguage('zh')" id="lang-zh-btn" class="px-2.5 py-1.5 text-xs font-black rounded-lg transition-all bg-purple-600 text-white">
+                    中文
+                </button>
+                <button onclick="setLanguage('pt')" id="lang-pt-btn" class="px-2.5 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200">
+                    Português
+                </button>
             </div>
-            <span id="progress-text" class="text-lg font-black text-purple-400">1 / 6</span>
+
+            <!-- 頂部進度條 (手機上隱藏，保留最大寬度) -->
+            <div class="hidden lg:flex items-center gap-4 bg-slate-800/80 px-6 py-3 rounded-2xl border border-slate-700/50">
+                <span id="progress-label" class="text-base font-bold text-slate-300">防雷通關進度:</span>
+                <div class="w-36 bg-slate-950 rounded-full h-4 overflow-hidden p-0.5 border border-slate-700">
+                    <div id="progress-bar" class="bg-gradient-to-r from-purple-500 to-indigo-500 h-full rounded-full transition-all duration-500" style="width: 16.6%"></div>
+                </div>
+                <span id="progress-text" class="text-lg font-black text-purple-400">1 / 6</span>
+            </div>
         </div>
     </header>
 
@@ -72,9 +86,9 @@
                 <button onclick="switchStep(6)" id="tab-6" class="py-3 md:py-4 text-slate-500 hover:text-slate-300 transition-all">06 <span id="check-6" class="hidden text-emerald-400 ml-0.5">✓</span></button>
             </div>
 
-            <!-- 📱 行動端收納切換按鈕 (桌機隱藏，高度僅 36px) -->
+            <!-- 📱 行動端收納切換按鈕 (桌機隱藏) -->
             <button id="mobile-toggle-btn" onclick="toggleMobileGuide()" class="lg:hidden w-full py-2.5 bg-slate-800 text-purple-400 font-extrabold text-xs md:text-sm border-b border-slate-700/80 flex items-center justify-center gap-2 transition-all">
-                <span><i class="fa-solid fa-angles-up mr-1 animate-pulse"></i> 收合任務說明（釋放操作空間）</span>
+                <span id="mobile-toggle-btn-text"><i class="fa-solid fa-angles-up mr-1 animate-pulse"></i> 收合任務說明（釋放操作空間）</span>
             </button>
 
             <!-- 任務說明滾動容器 -->
@@ -89,7 +103,7 @@
                     </div>
 
                     <div class="p-4 md:p-5 bg-slate-800/40 rounded-2xl border border-slate-700/40">
-                        <h3 class="text-base md:text-lg font-bold text-slate-200 mb-1 md:mb-2 flex items-center gap-2">
+                        <h3 id="step-pain-title" class="text-base md:text-lg font-bold text-slate-200 mb-1 md:mb-2 flex items-center gap-2">
                             <i class="fa-solid fa-circle-question text-purple-400"></i> 教學痛點與雷區
                         </h3>
                         <p id="step-pain" class="text-sm md:text-lg text-slate-300 leading-relaxed">
@@ -99,18 +113,17 @@
 
                     <!-- 任務指示卡 -->
                     <div class="p-4 md:p-6 bg-gradient-to-br from-indigo-950/40 to-slate-900/40 rounded-3xl border-2 border-indigo-500/20 shadow-xl space-y-2 md:space-y-4">
-                        <h3 class="text-lg md:text-xl font-black text-indigo-300 flex items-center gap-2">
+                        <h3 id="step-guide-title" class="text-lg md:text-xl font-black text-indigo-300 flex items-center gap-2">
                             <i class="fa-solid fa-circle-play"></i> 請依照引導操作：
                         </h3>
                         <div id="step-guide" class="text-sm md:text-lg text-slate-200 leading-relaxed space-y-2">
-                            <p>1. 點擊右側模擬器頂部的 <strong>「自訂主題 (調色盤)」</strong> 圖示。</p>
-                            <p>2. 在彈出的選單中，點選套用 <strong>「彩色鉛筆 (Pencils)」</strong> 橫幅圖示。</p>
+                            <!-- 這裡將由 JS 動態載入雙語指示 / Carregado dinamicamente via JS -->
                         </div>
                     </div>
 
                     <!-- 教師溫馨小提示 -->
                     <div id="tutor-box" class="p-4 md:p-6 bg-amber-500/10 border border-amber-500/20 rounded-2xl hidden transition-all duration-300">
-                        <h4 class="text-amber-400 font-bold text-base md:text-lg flex items-center gap-2">
+                        <h4 id="tutor-title" class="text-amber-400 font-bold text-base md:text-lg flex items-center gap-2">
                             <i class="fa-solid fa-lightbulb"></i> 備課導師溫馨提示：
                         </h4>
                         <p id="tutor-text" class="text-xs md:text-base text-amber-200/90 mt-1 md:mt-2 leading-relaxed">
@@ -119,10 +132,10 @@
                     </div>
                 </div>
 
-                <!-- 下一步控制按鈕 (收合時也會顯示，確保操作順暢) -->
+                <!-- 下一步控制按鈕 -->
                 <div class="mt-4 md:mt-8 border-t border-slate-800 pt-4 md:pt-6 space-y-3 md:space-y-4">
                     <div id="module-feedback" class="hidden p-4 rounded-2xl bg-emerald-500/10 border-2 border-emerald-500/20 text-emerald-300 text-xs md:text-base flex items-center gap-2 md:gap-3">
-                        <i class="fa-solid fa-circle-check text-xl md:text-2xl"></i> <span>本實踐模組任務已順利打通！</span>
+                        <i class="fa-solid fa-circle-check text-xl md:text-2xl"></i> <span id="module-feedback-text">本實踐模組任務已順利打通！</span>
                     </div>
                     <button id="next-btn" disabled onclick="handleNextAction()" class="w-full bg-slate-800 text-slate-500 font-black py-4 md:py-5 rounded-2xl transition-all flex items-center justify-center gap-2 md:gap-3 text-base md:text-xl shadow-lg disabled:cursor-not-allowed">
                         <span id="next-btn-text">請完成當前關卡任務</span> <i id="next-btn-icon" class="fa-solid fa-lock"></i>
@@ -147,50 +160,50 @@
                     </div>
                     <!-- 擬真頁籤導覽 (問題/回覆/設定) -->
                     <div class="flex gap-1 bg-slate-100 p-1 rounded-xl shrink-0">
-                        <button onclick="clickFormTab('questions')" class="px-3 sm:px-5 py-1.5 rounded-lg text-xs md:text-sm font-black text-purple-700 bg-white shadow-sm transition-all">問題</button>
-                        <button onclick="clickFormTab('responses')" class="px-3 sm:px-5 py-1.5 rounded-lg text-xs md:text-sm font-bold text-slate-600 hover:text-slate-900 transition-all">回覆 (0)</button>
-                        <button onclick="clickFormTab('settings')" class="px-3 sm:px-5 py-1.5 rounded-lg text-xs md:text-sm font-bold text-slate-600 hover:text-slate-900 transition-all">設定</button>
+                        <button id="questions-tab-btn" onclick="clickFormTab('questions')" class="px-3 sm:px-5 py-1.5 rounded-lg text-xs md:text-sm font-black text-purple-700 bg-white shadow-sm transition-all">問題</button>
+                        <button id="responses-tab-btn" onclick="clickFormTab('responses')" class="px-3 sm:px-5 py-1.5 rounded-lg text-xs md:text-sm font-bold text-slate-600 hover:text-slate-900 transition-all">回覆 (0)</button>
+                        <button id="settings-tab-btn" onclick="clickFormTab('settings')" class="px-3 sm:px-5 py-1.5 rounded-lg text-xs md:text-sm font-bold text-slate-600 hover:text-slate-900 transition-all">設定</button>
                     </div>
-                    <!-- 模擬功能按鈕列 (行動端縮減，維持大尺寸觸控) -->
+                    <!-- 模擬功能按鈕列 -->
                     <div class="flex items-center gap-2 shrink-0">
-                        <button onclick="clickThemePalette()" class="w-10 h-10 md:w-12 md:h-12 rounded-full hover:bg-slate-100 text-slate-600 flex items-center justify-center transition-all relative" title="自訂主題">
+                        <button onclick="clickThemePalette()" class="w-10 h-10 md:w-12 md:h-12 rounded-full hover:bg-slate-100 text-slate-600 flex items-center justify-center transition-all relative" id="palette-btn" title="自訂主題">
                             <i class="fa-solid fa-palette text-lg md:text-xl"></i>
                         </button>
-                        <button onclick="showToast('👁️ 預覽：目前為『編輯者模式』，您隨時可切換各步驟體驗填答者的手機視野。')" class="w-10 h-10 md:w-12 md:h-12 rounded-full hover:bg-slate-100 text-slate-600 flex items-center justify-center transition-all" title="預覽">
+                        <button onclick="showPreviewToast()" class="w-10 h-10 md:w-12 md:h-12 rounded-full hover:bg-slate-100 text-slate-600 flex items-center justify-center transition-all" id="preview-btn" title="預覽">
                             <i class="fa-solid fa-eye text-lg md:text-xl"></i>
                         </button>
-                        <button onclick="showToast('⚙️ 設定已同步儲存於雲端硬碟，無須手動存檔！')" class="hidden sm:flex w-10 h-10 md:w-12 md:h-12 rounded-full hover:bg-slate-100 text-slate-600 items-center justify-center transition-all" title="設定">
+                        <button onclick="showSettingsToast()" class="hidden sm:flex w-10 h-10 md:w-12 md:h-12 rounded-full hover:bg-slate-100 text-slate-600 items-center justify-center transition-all" id="settings-btn" title="設定">
                             <i class="fa-solid fa-gear text-lg md:text-xl"></i>
                         </button>
-                        <button onclick="showToast('✈️ 發送：在 L1 考試中，『傳送』是用來獲取填答連結或發送 Email 的重要關卡。')" class="bg-purple-700 hover:bg-purple-800 text-white font-bold px-4 md:px-6 py-2 md:py-2.5 rounded-xl transition-all shadow-md shadow-purple-500/10 text-xs md:text-sm">
+                        <button id="send-btn" onclick="showSendToast()" class="bg-purple-700 hover:bg-purple-800 text-white font-bold px-4 md:px-6 py-2 md:py-2.5 rounded-xl transition-all shadow-md shadow-purple-500/10 text-xs md:text-sm">
                             傳送
                         </button>
                     </div>
                 </div>
 
-                <!-- 🎨 Google Forms 經典右側直立式懸浮編輯工具列 (行動端微縮 75%，防止遮擋) -->
+                <!-- 🎨 Google Forms 經典右側直立式懸浮編輯工具列 -->
                 <div class="absolute right-2 sm:right-4 top-32 bg-white shadow-xl rounded-2xl border border-slate-200/80 p-1 md:p-2 flex flex-col gap-1 md:gap-2 z-20 scale-75 sm:scale-100 origin-top-right">
-                    <button onclick="showToolbarToast('add')" class="w-10 h-10 md:w-11 md:h-11 rounded-xl hover:bg-purple-50 hover:text-purple-600 text-slate-500 flex items-center justify-center transition-all" title="新增問題">
+                    <button id="tool-add" onclick="showToolbarToast('add')" class="w-10 h-10 md:w-11 md:h-11 rounded-xl hover:bg-purple-50 hover:text-purple-600 text-slate-500 flex items-center justify-center transition-all" title="新增問題">
                         <i class="fa-solid fa-plus text-base md:text-lg"></i>
                     </button>
-                    <button id="import-btn" onclick="showToolbarToast('import')" class="w-10 h-10 md:w-11 md:h-11 rounded-xl hover:bg-purple-50 hover:text-purple-600 text-slate-500 flex items-center justify-center transition-all" title="匯入問題">
+                    <button id="tool-import" onclick="showToolbarToast('import')" class="w-10 h-10 md:w-11 md:h-11 rounded-xl hover:bg-purple-50 hover:text-purple-600 text-slate-500 flex items-center justify-center transition-all" title="匯入問題">
                         <i class="fa-solid fa-file-import text-base md:text-lg"></i>
                     </button>
-                    <button onclick="showToolbarToast('text')" class="w-10 h-10 md:w-11 md:h-11 rounded-xl hover:bg-purple-50 hover:text-purple-600 text-slate-500 flex items-center justify-center transition-all" title="新增標題與說明">
+                    <button id="tool-text" onclick="showToolbarToast('text')" class="w-10 h-10 md:w-11 md:h-11 rounded-xl hover:bg-purple-50 hover:text-purple-600 text-slate-500 flex items-center justify-center transition-all" title="新增標題與說明">
                         <span class="font-bold text-xs md:text-sm">TT</span>
                     </button>
-                    <button onclick="showToolbarToast('image')" class="w-10 h-10 md:w-11 md:h-11 rounded-xl hover:bg-purple-50 hover:text-purple-600 text-slate-500 flex items-center justify-center transition-all" title="新增圖片">
+                    <button id="tool-image" onclick="showToolbarToast('image')" class="w-10 h-10 md:w-11 md:h-11 rounded-xl hover:bg-purple-50 hover:text-purple-600 text-slate-500 flex items-center justify-center transition-all" title="新增圖片">
                         <i class="fa-solid fa-image text-base md:text-lg"></i>
                     </button>
-                    <button onclick="showToolbarToast('video')" class="w-10 h-10 md:w-11 md:h-11 rounded-xl hover:bg-purple-50 hover:text-purple-600 text-slate-500 flex items-center justify-center transition-all" title="新增影片">
+                    <button id="tool-video" onclick="showToolbarToast('video')" class="w-10 h-10 md:w-11 md:h-11 rounded-xl hover:bg-purple-50 hover:text-purple-600 text-slate-500 flex items-center justify-center transition-all" title="新增影片">
                         <i class="fa-solid fa-video text-base md:text-lg"></i>
                     </button>
-                    <button id="section-btn" onclick="showToolbarToast('section')" class="w-10 h-10 md:w-11 md:h-11 rounded-xl hover:bg-purple-50 hover:text-purple-600 text-slate-500 flex items-center justify-center transition-all" title="新增區段">
+                    <button id="tool-section" onclick="showToolbarToast('section')" class="w-10 h-10 md:w-11 md:h-11 rounded-xl hover:bg-purple-50 hover:text-purple-600 text-slate-500 flex items-center justify-center transition-all" title="新增區段">
                         <i class="fa-solid fa-layer-group text-base md:text-lg"></i>
                     </button>
                 </div>
 
-                <!-- 橫幅 Banner 影像模擬區 (行動端高度微縮，防擠壓) -->
+                <!-- 橫幅 Banner 影像模擬區 -->
                 <div id="forms-banner-container" class="w-full h-28 md:h-44 bg-purple-900 flex items-center justify-center text-white relative transition-all duration-500 shrink-0">
                     <div id="forms-banner-overlay" class="absolute inset-0 bg-black/20 z-0"></div>
                     <div id="forms-banner-image" class="absolute inset-0 bg-cover bg-center transition-all duration-500" style="background-image: url('https://images.unsplash.com/photo-1510070112810-d4e9a46d9e91?auto=format&fit=crop&w=1200&q=80')"></div>
@@ -199,7 +212,7 @@
                     </div>
                 </div>
 
-                <!-- 表單編輯核心滾動容器 (行動端背景加深，強化閱讀) -->
+                <!-- 表單編輯核心滾動容器 -->
                 <div id="forms-editor-body" class="flex-1 p-4 md:p-8 overflow-y-auto space-y-4 md:space-y-6 bg-[#f0ebf8] relative no-scrollbar">
                     
                     <!-- 裝飾頂部彩線 (隨主題變動) -->
@@ -210,19 +223,19 @@
                     <!-- ========================================== -->
                     <div id="theme-palette-panel" class="hidden bg-white p-4 md:p-6 rounded-2xl shadow-xl border border-slate-200 space-y-3 md:space-y-4 mb-4 transition-all duration-300">
                         <div class="flex justify-between items-center border-b pb-2 md:pb-3">
-                            <h4 class="text-base md:text-lg font-black text-slate-800"><i class="fa-solid fa-palette text-purple-600 mr-2"></i> 主題樣式設定</h4>
+                            <h4 id="palette-panel-title" class="text-base md:text-lg font-black text-slate-800"><i class="fa-solid fa-palette text-purple-600 mr-2"></i> 主題樣式設定</h4>
                             <button onclick="toggleThemePanel(false)" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
                         </div>
                         <div class="space-y-2 md:space-y-3">
-                            <label class="block text-xs md:text-sm font-bold text-slate-600">選擇頁首影像：</label>
+                            <label id="choose-banner-label" class="block text-xs md:text-sm font-bold text-slate-600">選擇頁首影像：</label>
                             <div class="grid grid-cols-2 gap-2 md:gap-3">
                                 <button onclick="selectThemeBanner('default')" class="flex flex-col items-center border-2 border-purple-500 rounded-xl p-1.5 md:p-2 bg-purple-50/50">
                                     <div class="w-full h-10 md:h-12 bg-purple-900 rounded bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1510070112810-d4e9a46d9e91?auto=format&fit=crop&w=400&q=80')"></div>
-                                    <span class="text-[10px] md:text-xs font-bold text-purple-700 mt-1 text-center">經典紫色 (Default)</span>
+                                    <span id="opt-classic" class="text-[10px] md:text-xs font-bold text-purple-700 mt-1 text-center">經典紫色 (Default)</span>
                                 </button>
                                 <button onclick="selectThemeBanner('pencils')" id="pencils-theme-option" class="flex flex-col items-center border-2 border-slate-200 hover:border-purple-300 rounded-xl p-1.5 md:p-2 bg-white">
                                     <div class="w-full h-10 md:h-12 bg-teal-900 rounded bg-cover bg-center" style="background-image: url('https://static.vecteezy.com/system/resources/previews/072/745/614/non_2x/digital-learning-environment-students-illustration-vector.jpg')"></div>
-                                    <span class="text-[10px] md:text-xs font-bold text-slate-600 mt-1 text-center">彩色鉛筆 (Pencils)</span>
+                                    <span id="opt-pencils" class="text-[10px] md:text-xs font-bold text-slate-600 mt-1 text-center">彩色鉛筆 (Pencils)</span>
                                 </button>
                             </div>
                         </div>
@@ -230,8 +243,8 @@
 
                     <!-- 表單大標題與說明卡 -->
                     <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-4 md:p-8 space-y-3 md:space-y-4 relative border-l-8 border-l-purple-700">
-                        <input type="text" value="115 學年度家長聯絡簿調查" class="w-full text-lg md:text-3xl font-bold border-b border-transparent hover:border-slate-300 focus:border-purple-700 focus:outline-none py-1 text-slate-800">
-                        <textarea class="w-full text-sm md:text-lg border-b border-transparent hover:border-slate-300 focus:border-purple-700 focus:outline-none py-1 text-slate-500 resize-none h-14 md:h-16">各位家長好，請撥冗填寫本份調查表，以便導師建立本學期緊急聯絡簿資訊。謝謝您的支持與協助！</textarea>
+                        <input id="editor-title-val" type="text" value="115 學年度家長聯絡簿調查" class="w-full text-lg md:text-3xl font-bold border-b border-transparent hover:border-slate-300 focus:border-purple-700 focus:outline-none py-1 text-slate-800">
+                        <textarea id="editor-desc-val" class="w-full text-sm md:text-lg border-b border-transparent hover:border-slate-300 focus:border-purple-700 focus:outline-none py-1 text-slate-500 resize-none h-14 md:h-16">各位家長好，請撥冗填寫本份調查表，以便導師建立本學期緊急聯絡簿資訊。謝謝您的支持與協助！</textarea>
                     </div>
 
                     <!-- ========================================== -->
@@ -240,31 +253,31 @@
                     <div id="q-phone-card" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200/80 p-4 md:p-8 space-y-3 md:space-y-4 border-l-8 border-l-indigo-600 transition-all duration-500">
                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3 md:pb-4">
                             <div class="flex-1 space-y-1">
-                                <span class="bg-indigo-100 text-indigo-700 text-[10px] md:text-xs px-2 py-0.5 md:py-1 rounded-full font-black uppercase">問題 01</span>
-                                <input type="text" value="家長緊急聯絡手機" class="w-full text-base md:text-2xl font-bold text-slate-800 border-b border-transparent hover:border-slate-300 focus:border-indigo-600 focus:outline-none">
+                                <span id="q-phone-badge" class="bg-indigo-100 text-indigo-700 text-[10px] md:text-xs px-2 py-0.5 md:py-1 rounded-full font-black uppercase">問題 01</span>
+                                <input id="q-phone-title" type="text" value="家長緊急聯絡手機" class="w-full text-base md:text-2xl font-bold text-slate-800 border-b border-transparent hover:border-slate-300 focus:border-indigo-600 focus:outline-none">
                             </div>
                             <div class="flex items-center gap-1.5 md:gap-2 shrink-0">
-                                <span class="text-xs md:text-sm font-bold text-slate-500 bg-slate-100 px-2 md:px-3 py-1 md:py-1.5 rounded-lg"><i class="fa-solid fa-paragraph mr-1"></i> 簡答題</span>
+                                <span id="q-phone-type" class="text-xs md:text-sm font-bold text-slate-500 bg-slate-100 px-2 md:px-3 py-1 md:py-1.5 rounded-lg"><i class="fa-solid fa-paragraph mr-1"></i> 簡答題</span>
                             </div>
                         </div>
 
                         <!-- 欄位防呆設定區域 -->
                         <div class="p-3 md:p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3 md:space-y-4">
                             <div class="flex items-center justify-between">
-                                <span class="font-black text-slate-700 text-sm md:text-lg flex items-center gap-1.5 md:gap-2">
+                                <span id="q-phone-val-title" class="font-black text-slate-700 text-sm md:text-lg flex items-center gap-1.5 md:gap-2">
                                     <i class="fa-solid fa-shield-halved text-indigo-500"></i> 回覆驗證防呆：
                                 </span>
-                                <span class="text-xs font-bold text-slate-400">當前作用中</span>
+                                <span id="q-phone-status" class="text-xs font-bold text-slate-400">當前作用中</span>
                             </div>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 md:gap-3">
                                 <div class="flex items-center gap-2 bg-white px-3 py-1.5 md:py-2 rounded-xl border border-slate-200 text-xs md:text-sm font-bold text-slate-600">
-                                    <span>類型：</span><span class="text-indigo-600 font-bold">數字</span>
+                                    <span id="label-val-type">類型：</span><span class="text-indigo-600 font-bold" id="val-type-num">數字</span>
                                 </div>
                                 <div class="flex items-center gap-2 bg-white px-3 py-1.5 md:py-2 rounded-xl border border-slate-200 text-xs md:text-sm font-bold text-slate-600">
-                                    <span>規則：</span><span class="text-indigo-600 font-bold">長度等於</span>
+                                    <span id="label-val-rule">規則：</span><span class="text-indigo-600 font-bold" id="val-rule-len">長度等於</span>
                                 </div>
                                 <div class="flex items-center gap-2 bg-white px-3 py-1 md:py-1.5 rounded-xl border border-slate-200">
-                                    <span class="text-xs font-bold text-slate-500 shrink-0">限制值:</span>
+                                    <span id="label-val-limit" class="text-xs font-bold text-slate-500 shrink-0">限制值:</span>
                                     <input type="number" id="v-val" oninput="onRuleChange()" value="8" class="w-full bg-slate-100 text-slate-800 text-center font-bold rounded-lg py-0.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-xs md:text-base">
                                 </div>
                             </div>
@@ -272,7 +285,7 @@
 
                         <!-- 模擬填答打字區 -->
                         <div class="space-y-1 md:space-y-2">
-                            <label class="block text-xs md:text-sm font-bold text-slate-500">親自打字體驗家長填答感 (必須符合上方長度防呆規則)：</label>
+                            <label id="q-phone-label" class="block text-xs md:text-sm font-bold text-slate-500">親自打字體驗家長填答感 (必須符合上方長度防呆規則)：</label>
                             <div class="relative">
                                 <input type="text" id="phone-input" oninput="verifyPhoneFormat()" placeholder="例如：0912345678" class="w-full px-4 py-2 md:py-3 rounded-xl border-2 border-slate-300 focus:outline-none text-sm md:text-lg text-slate-800 font-bold">
                                 <div id="phone-feedback" class="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-500 text-lg md:text-xl hidden">
@@ -288,36 +301,34 @@
                     <!-- ========================================== -->
                     <div id="q-restrict-card" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200/80 p-4 md:p-8 space-y-3 md:space-y-4 border-l-8 border-l-rose-500 transition-all duration-500">
                         <div class="border-b border-slate-100 pb-3 md:pb-4">
-                            <span class="bg-rose-100 text-rose-700 text-[10px] md:text-xs px-2 py-0.5 md:py-1 rounded-full font-black uppercase">問題 02</span>
-                            <h3 class="text-base md:text-2xl font-bold text-slate-800 mt-1 md:mt-2">網域權限與家長免卡關</h3>
+                            <span id="q-domain-badge" class="bg-rose-100 text-rose-700 text-[10px] md:text-xs px-2 py-0.5 md:py-1 rounded-full font-black uppercase">問題 02</span>
+                            <h3 id="q-domain-title" class="text-base md:text-2xl font-bold text-slate-800 mt-1 md:mt-2">網域權限與家長免卡關</h3>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 items-center">
                             <!-- 後台設定：核取方塊 -->
                             <div class="p-4 md:p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 md:space-y-3">
-                                <h4 class="font-bold text-slate-700 text-sm md:text-lg flex items-center gap-2">
+                                <h4 id="q-domain-backend-title" class="font-bold text-slate-700 text-sm md:text-lg flex items-center gap-2">
                                     <i class="fa-solid fa-gears text-rose-500"></i> 後台：限制設定開關
                                 </h4>
                                 <label class="flex items-start gap-2.5 p-2.5 md:p-3 bg-white rounded-xl border border-slate-200 cursor-pointer hover:bg-rose-50/20 transition-all">
                                     <input type="checkbox" id="domain-lock-cb" checked onchange="toggleDomainLock()" class="mt-1 w-4 h-4 md:w-5 md:h-5 text-rose-600 rounded focus:ring-rose-500 shrink-0">
                                     <div>
-                                        <span class="font-bold text-slate-800 text-xs md:text-base">限制 [智慧國小] 的使用者</span>
-                                        <p class="text-[10px] md:text-xs text-slate-400 mt-0.5">限制僅能由智慧國小教育網域帳號填答</p>
+                                        <span id="q-domain-checkbox-text" class="font-bold text-slate-800 text-xs md:text-base">限制 [智慧國小] 的使用者</span>
+                                        <p id="q-domain-checkbox-sub" class="text-[10px] md:text-xs text-slate-400 mt-0.5">限制僅能由智慧國小教育網域帳號填答</p>
                                     </div>
                                 </label>
                             </div>
 
-                            <!-- 右邊：模擬家長手機畫面 (自適應微縮) -->
+                            <!-- 右邊：模擬家長手機畫面 -->
                             <div class="flex justify-center">
                                 <div class="w-full max-w-[220px] md:max-w-[260px] h-80 md:h-96 bg-slate-950 rounded-[32px] md:rounded-[40px] border-4 md:border-8 border-slate-800 p-3 md:p-4 relative flex flex-col justify-between overflow-hidden shadow-2xl shrink-0">
-                                    <!-- 聽筒、相機 -->
                                     <div class="absolute top-1.5 md:top-2 left-1/2 -translate-x-1/2 w-16 md:w-24 h-3 md:h-4 bg-slate-800 rounded-full z-10"></div>
                                     
-                                    <!-- 手機螢幕內部 -->
                                     <div id="phone-screen" class="flex-1 bg-rose-500 text-white rounded-[20px] md:rounded-[24px] p-3 md:p-4 flex flex-col items-center justify-center text-center gap-2 md:gap-3 transition-all duration-500">
                                         <i class="fa-solid fa-lock text-3xl md:text-5xl animate-bounce"></i>
-                                        <h5 class="text-sm md:text-lg font-black">您需要權限</h5>
-                                        <p class="text-[10px] md:text-xs text-rose-100 leading-relaxed">這份表單只能供智慧國小組織內部的信任使用者填寫。</p>
+                                        <h5 id="phone-lock-title" class="text-sm md:text-lg font-black">您需要權限</h5>
+                                        <p id="phone-lock-desc" class="text-[10px] md:text-xs text-rose-100 leading-relaxed">這份表單只能供智慧國小組織內部的信任使用者填寫。</p>
                                     </div>
                                 </div>
                             </div>
@@ -329,14 +340,14 @@
                     <!-- ========================================== -->
                     <div id="q-branch-card" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200/80 p-4 md:p-8 space-y-3 md:space-y-4 border-l-8 border-l-sky-500 transition-all duration-500">
                         <div class="border-b border-slate-100 pb-3 md:pb-4">
-                            <span class="bg-sky-100 text-sky-700 text-[10px] md:text-xs px-2 py-0.5 md:py-1 rounded-full font-black uppercase">問題 03</span>
-                            <h3 class="text-base md:text-2xl font-bold text-slate-800 mt-1 md:mt-2">星期五親師座談會，您是否出席？</h3>
+                            <span id="q-branch-badge" class="bg-sky-100 text-sky-700 text-[10px] md:text-xs px-2 py-0.5 md:py-1 rounded-full font-black uppercase">問題 03</span>
+                            <h3 id="q-branch-title" class="text-base md:text-2xl font-bold text-slate-800 mt-1 md:mt-2">星期五親師座談會，您是否出席？</h3>
                         </div>
 
                         <!-- 分流控制介面 -->
                         <div class="space-y-3 md:space-y-4">
                             <div class="flex items-center justify-between">
-                                <span class="font-bold text-slate-700 text-sm md:text-lg flex items-center gap-1.5 md:gap-2">
+                                <span id="q-branch-setting-title" class="font-bold text-slate-700 text-sm md:text-lg flex items-center gap-1.5 md:gap-2">
                                     <i class="fa-solid fa-route text-sky-500"></i> 設定：分流智慧路由 (Branching)
                                 </span>
                             </div>
@@ -346,7 +357,7 @@
                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 md:p-4 bg-slate-50 rounded-xl border border-slate-200">
                                     <div class="flex items-center gap-2 md:gap-3">
                                         <i class="fa-regular fa-circle text-slate-400"></i>
-                                        <span class="font-bold text-slate-700 text-xs md:text-base">A. 準時出席</span>
+                                        <span id="q-branch-choice-a" class="font-bold text-slate-700 text-xs md:text-base">A. 準時出席</span>
                                     </div>
                                     <select id="route-a" onchange="verifyBranchRules()" class="bg-white border-2 border-slate-200 text-slate-700 rounded-lg px-2 md:px-3 py-1 md:py-1.5 font-bold focus:outline-none focus:ring-2 focus:ring-sky-500 text-xs md:text-sm">
                                         <option value="continue">繼續前往下一個區段</option>
@@ -359,7 +370,7 @@
                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 md:p-4 bg-slate-50 rounded-xl border border-slate-200">
                                     <div class="flex items-center gap-2 md:gap-3">
                                         <i class="fa-regular fa-circle text-slate-400"></i>
-                                        <span class="font-bold text-slate-700 text-xs md:text-base">B. 無法出席</span>
+                                        <span id="q-branch-choice-b" class="font-bold text-slate-700 text-xs md:text-base">B. 無法出席</span>
                                     </div>
                                     <select id="route-b" onchange="verifyBranchRules()" class="bg-white border-2 border-slate-200 text-slate-700 rounded-lg px-2 md:px-3 py-1 md:py-1.5 font-bold focus:outline-none focus:ring-2 focus:ring-sky-500 text-xs md:text-sm">
                                         <option value="continue">繼續前往下一個區段</option>
@@ -372,10 +383,10 @@
 
                         <!-- 模擬分流填答測試按鈕 -->
                         <div id="branch-test-zone" class="hidden p-3 md:p-4 bg-sky-50 rounded-2xl border border-sky-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-                            <span class="text-xs md:text-sm font-bold text-sky-800 text-center sm:text-left">🎉 設定成功！點擊右側按鈕模擬體驗分流路由：</span>
+                            <span id="branch-test-desc" class="text-xs md:text-sm font-bold text-sky-800 text-center sm:text-left">🎉 設定成功！點擊右側按鈕模擬體驗分流路由：</span>
                             <div class="flex gap-2 shrink-0">
-                                <button onclick="simulateBranchTest('A')" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-3 md:px-4 py-1.5 md:py-2 rounded-xl text-xs md:text-sm transition-all shadow">模擬選 A ➔</button>
-                                <button onclick="simulateBranchTest('B')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 md:px-4 py-1.5 md:py-2 rounded-xl text-xs md:text-sm transition-all shadow">模擬選 B ➔</button>
+                                <button id="btn-sim-a" onclick="simulateBranchTest('A')" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-3 md:px-4 py-1.5 md:py-2 rounded-xl text-xs md:text-sm transition-all shadow">模擬選 A ➔</button>
+                                <button id="btn-sim-b" onclick="simulateBranchTest('B')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 md:px-4 py-1.5 md:py-2 rounded-xl text-xs md:text-sm transition-all shadow">模擬選 B ➔</button>
                             </div>
                         </div>
                     </div>
@@ -385,30 +396,30 @@
                     <!-- ========================================== -->
                     <div id="q-limit-card" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200/80 p-4 md:p-8 space-y-3 md:space-y-4 border-l-8 border-l-emerald-500 transition-all duration-500">
                         <div class="border-b border-slate-100 pb-3 md:pb-4">
-                            <span class="bg-emerald-100 text-emerald-700 text-[10px] md:text-xs px-2 py-0.5 md:py-1 rounded-full font-black uppercase">問題 04</span>
-                            <h3 class="text-base md:text-2xl font-bold text-slate-800 mt-1 md:mt-2">智慧定量截止（原生功能不裝外掛）</h3>
+                            <span id="q-limit-badge" class="bg-emerald-100 text-emerald-700 text-[10px] md:text-xs px-2 py-0.5 md:py-1 rounded-full font-black uppercase">問題 04</span>
+                            <h3 id="q-limit-title" class="text-base md:text-2xl font-bold text-slate-800 mt-1 md:mt-2">智慧定量截止（原生功能不裝外掛）</h3>
                         </div>
 
                         <div class="p-3 md:p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3 md:space-y-4">
-                            <h4 class="font-bold text-slate-700 text-sm md:text-lg flex items-center gap-1.5 md:gap-2">
+                            <h4 id="q-limit-rule-title" class="font-bold text-slate-700 text-sm md:text-lg flex items-center gap-1.5 md:gap-2">
                                 <i class="fa-solid fa-clock-rotate-left text-emerald-500"></i> 設定：自動關閉回應規則
                             </h4>
                             <div class="space-y-2 md:space-y-3">
                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 md:p-4 bg-white rounded-xl border border-slate-200">
-                                    <span class="font-bold text-slate-700 text-xs md:text-base">自動關閉條件：</span>
-                                    <span class="text-emerald-600 font-extrabold text-xs md:text-base">達到指定回應數之後 (定量)</span>
+                                    <span id="q-limit-cond-label" class="font-bold text-slate-700 text-xs md:text-base">自動關閉條件：</span>
+                                    <span id="q-limit-cond-val" class="text-emerald-600 font-extrabold text-xs md:text-base">達到指定回應數之後 (定量)</span>
                                 </div>
                                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3 md:p-4 bg-white rounded-xl border border-slate-200">
-                                    <span class="font-bold text-slate-700 text-xs md:text-base">最大回應數上限：</span>
+                                    <span id="q-limit-max-label" class="font-bold text-slate-700 text-xs md:text-base">最大回應數上限：</span>
                                     <input type="number" id="limit-num" placeholder="例如：30" class="w-full sm:w-32 bg-slate-100 text-slate-800 text-center font-bold rounded-lg py-1 md:py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-xs md:text-sm">
                                 </div>
                                 <div class="space-y-1.5 md:space-y-2">
-                                    <span class="block font-bold text-slate-700 text-xs md:text-base">給填答者的自訂客製化提示訊息：</span>
+                                    <span id="q-limit-msg-label" class="block font-bold text-slate-700 text-xs md:text-base">給填答者的自訂客製化提示訊息：</span>
                                     <input type="text" id="limit-msg" placeholder="請更改此處內容..." class="w-full px-3 md:px-4 py-2 md:py-2.5 rounded-xl border-2 border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-bold text-slate-800 text-xs md:text-sm">
                                 </div>
                             </div>
                             <div class="flex justify-end pt-1 md:pt-2">
-                                <button onclick="saveLimitRules()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 md:px-6 py-2 md:py-2.5 rounded-xl transition-all shadow text-xs md:text-sm">
+                                <button id="q-limit-save-btn" onclick="saveLimitRules()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-black px-4 md:px-6 py-2 md:py-2.5 rounded-xl transition-all shadow text-xs md:text-sm">
                                     儲存設定
                                 </button>
                             </div>
@@ -420,8 +431,8 @@
                     <!-- ========================================== -->
                     <div id="q-sheets-card" class="hidden bg-white rounded-2xl shadow-sm border border-slate-200/80 p-4 md:p-8 space-y-3 md:space-y-4 border-l-8 border-l-green-600 transition-all duration-500">
                         <div class="border-b border-slate-100 pb-3 md:pb-4">
-                            <span class="bg-green-100 text-green-700 text-[10px] md:text-xs px-2 py-0.5 md:py-1 rounded-full font-black uppercase">問題 05</span>
-                            <h3 class="text-base md:text-2xl font-bold text-slate-800 mt-1 md:mt-2">後台試算表重新綁定與大復活</h3>
+                            <span id="q-sheets-badge" class="bg-green-100 text-green-700 text-[10px] md:text-xs px-2 py-0.5 md:py-1 rounded-full font-black uppercase">問題 05</span>
+                            <h3 id="q-sheets-title" class="text-base md:text-2xl font-bold text-slate-800 mt-1 md:mt-2">後台試算表重新綁定與大復活</h3>
                         </div>
 
                         <!-- 模擬試算表狀態卡 -->
@@ -444,11 +455,11 @@
                                         </button>
                                         <!-- 三點選單下拉區 -->
                                         <div id="sheets-dropdown" class="hidden absolute right-0 top-11 bg-white rounded-xl shadow-xl border border-slate-200 py-1.5 md:py-2 w-40 md:w-48 z-30 font-bold text-xs md:text-sm">
-                                            <button onclick="unlinkSheets()" class="w-full text-left px-3 md:px-4 py-1.5 md:py-2 hover:bg-rose-50 text-rose-600 flex items-center gap-1.5 md:gap-2"><i class="fa-solid fa-link-slash"></i> 取消連結表單</button>
-                                            <button onclick="showToast('ℹ️ 下載回應為 .csv 檔為獨立離線分析的最佳考科重點！')" class="w-full text-left px-3 md:px-4 py-1.5 md:py-2 hover:bg-slate-50 text-slate-600 flex items-center gap-1.5 md:gap-2"><i class="fa-solid fa-download"></i> 下載回應 (.csv)</button>
+                                            <button id="unlink-sheets-btn" onclick="unlinkSheets()" class="w-full text-left px-3 md:px-4 py-1.5 md:py-2 hover:bg-rose-50 text-rose-600 flex items-center gap-1.5 md:gap-2"><i class="fa-solid fa-link-slash"></i> 取消連結表單</button>
+                                            <button id="download-csv-btn" onclick="showCsvToast()" class="w-full text-left px-3 md:px-4 py-1.5 md:py-2 hover:bg-slate-50 text-slate-600 flex items-center gap-1.5 md:gap-2"><i class="fa-solid fa-download"></i> 下載回應 (.csv)</button>
                                         </div>
                                     </div>
-                                    <button onclick="openMockSheets()" class="bg-green-600 hover:bg-green-700 text-white font-black px-4 md:px-5 py-2 md:py-2.5 rounded-xl transition-all shadow text-xs md:text-sm">
+                                    <button id="open-sheet-btn" onclick="openMockSheets()" class="bg-green-600 hover:bg-green-700 text-white font-black px-4 md:px-5 py-2 md:py-2.5 rounded-xl transition-all shadow text-xs md:text-sm">
                                         建立 / 查看試算表
                                     </button>
                                 </div>
@@ -458,12 +469,12 @@
 
                 </div>
 
-                <!-- 📊 擬真講師 Google Sheets 後台數據網格 (手機端高度自適應，具橫向滾動防止爆版) -->
+                <!-- 📊 擬真講師 Google Sheets 後台數據網格 -->
                 <div id="mock-sheets-modal" class="hidden bg-white border-t-4 border-t-green-600 shadow-2xl p-4 md:p-8 space-y-3 md:space-y-4 max-h-72 md:max-h-80 overflow-y-auto shrink-0 z-20">
                     <div class="flex justify-between items-center border-b pb-2 md:pb-3">
                         <div class="flex items-center gap-1.5 md:gap-2 text-green-700">
                             <i class="fa-solid fa-file-excel text-lg md:text-2xl"></i>
-                            <h4 class="text-base md:text-xl font-extrabold text-slate-800">講師後台數據大匯流試算表</h4>
+                            <h4 id="modal-sheets-title" class="text-base md:text-xl font-extrabold text-slate-800">講師後台數據大匯流試算表</h4>
                         </div>
                         <button onclick="toggleMockSheetsModal(false)" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg md:text-xl"></i></button>
                     </div>
@@ -471,24 +482,24 @@
                         <table class="w-full text-left border-collapse text-xs md:text-base min-w-[600px]">
                             <thead>
                                 <tr class="bg-green-600 text-white font-bold">
-                                    <th class="p-2 md:p-3 border">時間戳記</th>
-                                    <th class="p-2 md:p-3 border">學員姓名</th>
-                                    <th class="p-2 md:p-3 border">服務學校 / 機構</th>
-                                    <th class="p-2 md:p-3 border">最有收穫的工具</th>
-                                    <th class="p-2 md:p-3 border">最有挑戰的工具</th>
-                                    <th class="p-2 md:p-3 border">今日研習心得</th>
-                                    <th class="p-2 md:p-3 border">最喜愛表單功能</th>
+                                    <th id="th-time" class="p-2 md:p-3 border">時間戳記</th>
+                                    <th id="th-name" class="p-2 md:p-3 border">學員姓名</th>
+                                    <th id="th-school" class="p-2 md:p-3 border">服務學校 / 機構</th>
+                                    <th id="th-tool-rew" class="p-2 md:p-3 border">最有收穫的工具</th>
+                                    <th id="th-tool-cha" class="p-2 md:p-3 border">最有挑戰的工具</th>
+                                    <th id="th-opinion" class="p-2 md:p-3 border">今日研習心得</th>
+                                    <th id="th-favs" class="p-2 md:p-3 border">最喜愛表單功能</th>
                                 </tr>
                             </thead>
                             <tbody id="sheets-data-rows" class="text-slate-700 font-bold bg-slate-50">
                                 <tr class="border-b bg-white">
                                     <td class="p-2 md:p-3 border text-slate-400">2026/07/06 14:00:15</td>
-                                    <td class="p-2 md:p-3 border">陳大明</td>
-                                    <td class="p-2 md:p-3 border">智慧國民小學</td>
+                                    <td class="p-2 md:p-3 border">陳大明 (Daming Chen)</td>
+                                    <td class="p-2 md:p-3 border">智慧國民小學 (Escola Inteligente)</td>
                                     <td class="p-2 md:p-3 border">Google Forms</td>
                                     <td class="p-2 md:p-3 border">Google Sheets</td>
-                                    <td class="p-2 md:p-3 border">今天這套實物模擬器非常驚人，讓原本冰冷的操作立刻有了生命！</td>
-                                    <td class="p-2 md:p-3 border">回覆驗證防呆, 智慧路由分流</td>
+                                    <td class="p-2 md:p-3 border" id="mock-row-feedback">今天這套實物模擬器非常驚人，讓原本冰冷的操作立刻有了生命！</td>
+                                    <td class="p-2 md:p-3 border" id="mock-row-favs">回覆驗證防呆, 智慧路由分流</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -500,7 +511,7 @@
     </main>
 
     <!-- ========================================== -->
-    <!-- 🏆 全通關大回顧問卷對話框 popup (自適應與滾動保護) -->
+    <!-- 🏆 全通關大回顧問卷對話框 popup -->
     <!-- ========================================== -->
     <div id="survey-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 md:p-6 z-50 overflow-y-auto no-scrollbar">
         <div class="bg-slate-900 border-2 border-purple-500/30 rounded-3xl w-full max-w-2xl p-6 md:p-8 space-y-4 md:space-y-6 shadow-2xl relative my-auto max-h-[90vh] overflow-y-auto no-scrollbar">
@@ -508,26 +519,26 @@
             
             <div class="text-center space-y-1.5 md:space-y-2">
                 <span class="px-3 py-1 bg-emerald-950/50 text-emerald-400 rounded-full text-[10px] md:text-xs font-black border border-emerald-700/40 inline-block">CONGRATULATIONS</span>
-                <h3 class="text-lg md:text-3xl font-black text-white">🎉 恭喜您打通 6 大實踐模組！</h3>
-                <p class="text-xs md:text-base text-slate-300">這是一次真正的研習數據大匯流！填寫下方問卷後，資料將真實提交到講師的試算表後台。</p>
+                <h3 id="survey-title" class="text-lg md:text-3xl font-black text-white">🎉 恭喜您打通 6 大實踐模組！</h3>
+                <p id="survey-desc" class="text-xs md:text-base text-slate-300">這是一次真正的研習數據大匯流！填寫下方問卷後，資料將真實提交到講師的試算表後台。</p>
             </div>
 
-            <form id="real-survey-form" onsubmit="submitRealSurvey(event)" class="space-y-3 md:space-y-4 text-xs md:text-base font-bold">
+            <form id="real-survey-form" onsubmit="submitRealSurvey(event)" class="space-y-3 md:space-y-4 text-xs md:text-base font-bold text-slate-200">
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                     <div class="space-y-1">
-                        <label class="block text-slate-300">學員姓名：</label>
+                        <label id="survey-label-name" class="block text-slate-300">學員姓名：</label>
                         <input type="text" name="name" required placeholder="請填寫您的真實大名" class="w-full px-3 md:px-4 py-2 md:py-2.5 bg-slate-800 text-white rounded-xl border border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500">
                     </div>
                     <div class="space-y-1">
-                        <label class="block text-slate-300">服務學校 / 機構：</label>
+                        <label id="survey-label-school" class="block text-slate-300">服務學校 / 機構：</label>
                         <input type="text" name="school" required placeholder="請填寫您的學校單位" class="w-full px-3 md:px-4 py-2 md:py-2.5 bg-slate-800 text-white rounded-xl border border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                     <div class="space-y-1">
-                        <label class="block text-slate-300">今天最有收穫的工具：</label>
+                        <label id="survey-label-tool-rew" class="block text-slate-300">今天最有收穫的工具：</label>
                         <select name="most_rewarding" class="w-full px-3 md:px-4 py-2 md:py-2.5 bg-slate-800 text-white rounded-xl border border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500 text-xs md:text-base">
                             <option value="Google Docs">Google Docs (文件組)</option>
                             <option value="Google Sheets">Google Sheets (試算表)</option>
@@ -536,7 +547,7 @@
                         </select>
                     </div>
                     <div class="space-y-1">
-                        <label class="block text-slate-300">今天最具挑戰性的工具：</label>
+                        <label id="survey-label-tool-cha" class="block text-slate-300">今天最具挑戰性的工具：</label>
                         <select name="most_challenging" class="w-full px-3 md:px-4 py-2 md:py-2.5 bg-slate-800 text-white rounded-xl border border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500 text-xs md:text-base">
                             <option value="Google Docs">Google Docs (文件排版)</option>
                             <option value="Google Sheets" selected>Google Sheets (函數與資料庫)</option>
@@ -547,27 +558,27 @@
                 </div>
 
                 <div class="space-y-1.5">
-                    <label class="block text-slate-300">您最喜歡本套模擬練習器的哪些功能 (複選)：</label>
+                    <label id="survey-label-favs" class="block text-slate-300">您最喜歡本套模擬練習器的哪些功能 (複選)：</label>
                     <div class="grid grid-cols-2 gap-1.5 text-[10px] md:text-sm text-slate-300 font-bold">
-                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="favorites" value="自訂鉛筆主題" checked class="w-4 h-4 text-purple-600 rounded">自訂鉛筆主題</label>
-                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="favorites" value="10碼手機動態驗證" checked class="w-4 h-4 text-purple-600 rounded">10碼手機驗證</label>
-                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="favorites" value="網域鎖與家長免卡關" checked class="w-4 h-4 text-purple-600 rounded">網域鎖免卡關</label>
-                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="favorites" value="分流智慧路由" checked class="w-4 h-4 text-purple-600 rounded">分流智慧路由</label>
-                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="favorites" value="定量自動截止" checked class="w-4 h-4 text-purple-600 rounded">定量自動截止</label>
-                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="favorites" value="試算表重新連結" checked class="w-4 h-4 text-purple-600 rounded">試算表重新連結</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="favorites" value="自訂鉛筆主題" checked class="w-4 h-4 text-purple-600 rounded"><span id="chk-opt-1">自訂鉛筆主題</span></label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="favorites" value="10碼手機動態驗證" checked class="w-4 h-4 text-purple-600 rounded"><span id="chk-opt-2">10碼手機驗證</span></label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="favorites" value="網域鎖與家長免卡關" checked class="w-4 h-4 text-purple-600 rounded"><span id="chk-opt-3">網域鎖免卡關</span></label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="favorites" value="分流智慧路由" checked class="w-4 h-4 text-purple-600 rounded"><span id="chk-opt-4">分流智慧路由</span></label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="favorites" value="定量自動截止" checked class="w-4 h-4 text-purple-600 rounded"><span id="chk-opt-5">定量自動截止</span></label>
+                        <label class="flex items-center gap-1.5 cursor-pointer"><input type="checkbox" name="favorites" value="試算表重新連結" checked class="w-4 h-4 text-purple-600 rounded"><span id="chk-opt-6">試算表重新連結</span></label>
                     </div>
                 </div>
 
                 <div class="space-y-1">
-                    <label class="block text-slate-300">今日研習心得回饋 (不少於 5 個字)：</label>
+                    <label id="survey-label-opinion" class="block text-slate-300">今日研習心得回饋 (不少於 5 個字)：</label>
                     <textarea name="opinion" required rows="2" placeholder="請寫下您對今日研習或這台防雷模擬器的寶貴回饋意見" class="w-full px-3 md:px-4 py-2 bg-slate-800 text-white rounded-xl border border-slate-700 focus:outline-none focus:ring-2 focus:ring-purple-500 text-xs md:text-base h-16 md:h-20 resize-none"></textarea>
                 </div>
 
                 <div class="pt-2 flex flex-col items-center gap-2 md:gap-3">
                     <button type="submit" id="submit-survey-btn" class="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-black py-3.5 md:py-4 rounded-2xl text-base md:text-xl transition-all shadow-lg flex items-center justify-center gap-2 md:gap-3">
-                        <span>發送真實數據 ➔</span> <i class="fa-solid fa-paper-plane"></i>
+                        <span id="btn-submit-text">發送真實數據 ➔</span> <i class="fa-solid fa-paper-plane"></i>
                     </button>
-                    <span class="text-[10px] text-slate-500">本表單將以 mode: 'no-cors' 高效安全性直接寫入講師的雲端資料庫。</span>
+                    <span id="survey-disclaimer" class="text-[10px] text-slate-500">本表單將以 mode: 'no-cors' 高效安全性直接寫入講師的雲端資料庫。</span>
                 </div>
 
             </form>
@@ -577,7 +588,7 @@
     <!-- 🎆 Canvas 全螢幕煙火畫布 (僅在通關慶祝時顯現) -->
     <canvas id="fireworks-canvas" class="fixed inset-0 pointer-events-none z-40 hidden"></canvas>
 
-    <!-- 🍞 智慧通知浮動 Toast (手機版寬度限制) -->
+    <!-- 🍞 智慧通知浮動 Toast -->
     <div id="toast-notification" class="fixed bottom-4 md:bottom-6 right-4 md:right-6 bg-slate-900 border-2 border-purple-500/40 text-slate-200 px-4 md:px-6 py-3 md:py-4 rounded-2xl shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0 z-50 font-bold max-w-[90vw] md:max-w-sm">
         <div class="flex items-center gap-2 md:gap-3 text-sm md:text-lg">
             <span id="toast-text">通知內容...</span>
@@ -589,7 +600,9 @@
         const WEB_APP_API = "https://script.google.com/macros/s/AKfycbyqMBiAfvGtjwF8_3pH8nAr9tNEGhqxx5wKn8HrPSBgWQxTVxHsphznUcJ85g8tNgWh/exec";
 
         // 系統全局狀態機
+        let currentLang = 'zh'; // 'zh' 為中文，'pt' 為葡萄牙語
         let currentStep = 1;
+        
         const taskStatus = {
             1: false, // 自訂主題：已套用 pencils
             2: false, // 欄位防呆：已輸入合格 10 碼數字手機且限制為 10
@@ -600,88 +613,524 @@
         };
 
         let unlinkedSheetsState = false; 
-        let isMobileGuideCollapsed = false; // 📱 新增行動端收合狀態
+        let isMobileGuideCollapsed = false;
 
-        // 關卡引導說明
-        const stepDetails = {
-            1: {
-                title: "外觀色彩美化",
-                badge: "實踐模組 01",
-                pain: "學校問卷預設的紫色外觀太過冰冷。第一步，讓我們利用自訂主題，更換為極具親和力的教育主題 Banner 圖，拉近與學生的距離！",
-                guide: "<p>1. 點擊右側模擬器頂部的 <strong>「自訂主題 (調色盤)」</strong> 圖示。</p><p>2. 在彈出的選單中，點選套用 <strong>「彩色鉛筆 (Pencils)」</strong> 橫幅圖示。</p>",
-                tutor: "自訂主題 Banner 除了視覺美化外，系統還會根據影像主色調，自動調配和諧、適配的背景色，避免產生刺眼的設計配色喔。"
+        // 雙語翻譯字典集 / Dicionário de Tradução Bilíngue
+        const langPack = {
+            zh: {
+                header_title: 'Google Forms L1 <span class="text-purple-400">智慧校園模擬練習器</span>',
+                header_subtitle: '全真雙向模擬狀態機 • 100% 免登入排雷實踐',
+                progress_label: '防雷通關進度:',
+                mobile_toggle_collapse: '<i class="fa-solid fa-angles-up mr-1 animate-pulse"></i> 收合任務說明（釋放操作空間）',
+                mobile_toggle_expand: '<i class="fa-solid fa-angles-down mr-1 animate-pulse"></i> 展開任務說明（查看解鎖步驟）',
+                step_pain_title: '<i class="fa-solid fa-circle-question text-purple-400"></i> 教學痛點與雷區',
+                step_guide_title: '<i class="fa-solid fa-circle-play"></i> 請依照引導操作：',
+                tutor_title: '<i class="fa-solid fa-lightbulb"></i> 備課導師溫馨提示：',
+                module_feedback_text: '本實踐模組任務已順利打通！',
+                next_btn_lock: '請完成當前關卡任務',
+                next_btn_unlock: '打通！前往實踐模組 0',
+                next_btn_all_clear: '🎉 恭喜全通關！點擊填寫心得大匯流 ➔',
+                form_file_title: '115 學年度家長聯絡簿調查',
+                tab_questions: '問題',
+                tab_responses: '回覆 (0)',
+                tab_settings: '設定',
+                palette_panel_title: '<i class="fa-solid fa-palette text-purple-600 mr-2"></i> 主題樣式設定',
+                choose_banner_label: '選擇頁首影像：',
+                opt_classic: '經典紫色 (Default)',
+                opt_pencils: '彩色鉛筆 (Pencils)',
+                banner_text: '115 學年度第一學期家長聯絡網',
+                editor_title_val: '115 學年度家長聯絡簿調查',
+                editor_desc_val: '各位家長好，請撥冗填寫本份調查表，以便導師建立本學期緊急聯絡簿資訊。謝謝您的支持與協助！',
+                q_phone_badge: '問題 01',
+                q_phone_title: '家長緊急聯絡手機',
+                q_phone_type: '<i class="fa-solid fa-paragraph mr-1"></i> 簡答題',
+                q_phone_val_title: '<i class="fa-solid fa-shield-halved text-indigo-500"></i> 回覆驗證防呆：',
+                q_phone_status: '當前作用中',
+                label_val_type: '類型：',
+                val_type_num: '數字',
+                label_val_rule: '規則：',
+                val_rule_len: '長度等於',
+                label_val_limit: '限制值:',
+                q_phone_label: '親自打字體驗家長填答感 (必須符合上方長度防呆規則)：',
+                phone_input_placeholder: '例如：0912345678',
+                q_domain_badge: '問題 02',
+                q_domain_title: '網域權限與家長免卡關',
+                q_domain_backend_title: '<i class="fa-solid fa-gears text-rose-500"></i> 後台：限制設定開關',
+                q_domain_checkbox_text: '限制 [智慧國小] 的使用者',
+                q_domain_checkbox_sub: '限制僅能由智慧國小教育網域帳號填答',
+                phone_lock_title: '您需要權限',
+                phone_lock_desc: '這份表單只能供智慧國小組織內部的信任使用者填寫。',
+                phone_unlock_title: '表單填寫暢通',
+                phone_unlock_desc: '此表單已對外部家長開放，一般 Gmail 填寫暢通不卡關！',
+                q_branch_badge: '問題 03',
+                q_branch_title: '星期五親師座談會，您是否出席？',
+                q_branch_setting_title: '<i class="fa-solid fa-route text-sky-500"></i> 設定：分流智慧路由 (Branching)',
+                q_branch_choice_a: 'A. 準時出席',
+                q_branch_choice_b: 'B. 無法出席',
+                branch_test_desc: '🎉 設定成功！點擊右側按鈕模擬體驗分流路由：',
+                btn_sim_a: '模擬選 A ➔',
+                btn_sim_b: '模擬選 B ➔',
+                q_limit_badge: '問題 04',
+                q_limit_title: '智慧定量截止（原生功能不裝外掛）',
+                q_limit_rule_title: '<i class="fa-solid fa-clock-rotate-left text-emerald-500"></i> 設定：自動關閉回應規則',
+                q_limit_cond_label: '自動關閉條件：',
+                q_limit_cond_val: '達到指定回應數之後 (定量)',
+                q_limit_max_label: '最大回應數上限：',
+                limit_num_placeholder: '例如：30',
+                q_limit_msg_label: '給填答者的自訂客製化提示訊息：',
+                limit_msg_placeholder: '請更改此處內容...',
+                q_limit_save_btn: '儲存設定',
+                q_sheets_badge: '問題 05',
+                q_sheets_title: '後台試算表重新綁定與大復活',
+                sheets_status_badge: '已連結試算表',
+                sheets_status_unlinked: '已中斷與試算表連結',
+                sheets_title: '115 學年度家長聯絡簿調查 (Responses)',
+                sheets_title_unlinked: '未連結任何試算表',
+                unlink_sheets_btn: '<i class="fa-solid fa-link-slash"></i> 取消連結表單',
+                download_csv_btn: '<i class="fa-solid fa-download"></i> 下載回應 (.csv)',
+                open_sheet_btn: '建立 / 查看試算表',
+                modal_sheets_title: '講師後台數據大匯流試算表',
+                th_time: '時間戳記',
+                th_name: '學員姓名',
+                th_school: '服務學校 / 機構',
+                th_tool_rew: '最有收穫的工具',
+                th_tool_cha: '最有挑戰的工具',
+                th_opinion: '今日研習心得',
+                th_favs: '最喜愛表單功能',
+                mock_row_feedback: '今天這套實物模擬器非常驚人，讓原本冰冷的操作立刻有了生命！',
+                mock_row_favs: '回覆驗證防呆, 智慧路由分流',
+                survey_title: '🎉 恭喜您打通 6 大實踐模組！',
+                survey_desc: '這是一次真正的研習數據大匯流！填寫下方問卷後，資料將真實提交到講師的試算表後台。',
+                survey_label_name: '學員姓名：',
+                survey_placeholder_name: '請填寫您的真實大名',
+                survey_label_school: '服務學校 / 機構：',
+                survey_placeholder_school: '請填寫您的學校單位',
+                survey_label_tool_rew: '今天最有收穫的工具：',
+                survey_label_tool_cha: '今天最具挑戰性的工具：',
+                survey_label_favs: '您最喜歡本套模擬練習器的哪些功能 (複選)：',
+                survey_label_opinion: '今日研習心得回饋 (不少於 5 個字)：',
+                survey_placeholder_opinion: '請寫下您對今日研習或這台防雷模擬器的寶貴回饋意見',
+                btn_submit_text: '發送真實數據 ➔',
+                survey_disclaimer: '本表單將以 mode: \'no-cors\' 高效安全性直接寫入講師的雲端資料庫。',
+                chk_opt_1: '自訂鉛筆主題',
+                chk_opt_2: '10碼手機驗證',
+                chk_opt_3: '網域鎖免卡關',
+                chk_opt_4: '分流智慧路由',
+                chk_opt_5: '定量自動截止',
+                chk_opt_6: '試算表重新連結'
             },
-            2: {
-                title: "欄位格式防呆",
-                badge: "實踐模組 02",
-                pain: "聯絡資訊防呆！家長輸入錯漏、少一碼手機號碼，會導致導師通訊錄失效。這關我們啟用「簡答題回覆驗證」，限制輸入必須為 10 碼數字。",
-                guide: "<p>1. 注意：此時右側模擬器已解鎖 <strong>「家長緊急聯絡手機」</strong> 題目卡。</p><p>2. 調整上方限制長度值，請務必將 <strong>「限制長度值」改為「10」</strong>。</p><p>3. 在下方輸入框中 <strong>模擬輸入一個完整 10 碼手機號碼</strong> (如 0912345678) 檢驗防呆是否生效！</p>",
-                tutor: "在 L1 考核中，簡答題的回覆驗證是必考地雷。開啟此功能時，請務必養成輸入『客製化錯誤提示』的好習慣，家長格式填錯時才能即時自救！"
-            },
-            3: {
-                title: "解除組織網域限制",
-                badge: "實踐模組 03",
-                pain: "親師溝通卡死！學校教育網域預設會勾選『限制網域使用者』，導致校外家長一般 Gmail 點開直接顯示『您需要權限』紅色警告。",
-                guide: "<p>1. 此時右側家長手機畫面顯示 <strong>『您需要權限』紅色警告</strong>，家長完全打不開表單。</p><p>2. 請在後台設定卡片中，<strong>「取消勾選」</strong> 限制使用者複選框。</p><p>3. 親眼體驗右側家長手機紅色警告消失、滑入正常表單的絲滑感！</p>",
-                tutor: "這個操作是全台灣資訊組長每學期必備的第一名救火技能！只要是在校外進行的問卷、家長會報名，請一律取消此網域勾選！"
-            },
-            4: {
-                title: "智慧路徑與分流",
-                badge: "實踐模組 04",
-                pain: "不要強迫不出席家長填寫葷食！對於不同作答者，透過『根據答案前往特定區段 (Branching)』分流引導，是最溫暖的問卷體驗。",
-                guide: "<p>1. 請將選項 <strong>「A. 準時出席」</strong> 旁的下拉選單，指路至 <strong>「前往區段 2 (午餐調查)」</strong>。</p><p>2. 將選項 <strong>「B. 無法出席」</strong> 旁的下拉選單，指路至 <strong>「前往區段 3 (意見委託)」</strong>。</p><p>3. 當指路正確，即可在下方亮起「模擬體驗按鈕」，親自測試分流！</p>",
-                tutor: "請特別留意：在 L1 小考測驗模式下，若使用分流，每位學生作答題數不同，總分基底會打架。因此，有正式分數計算的考卷絕不能開啟分流路由！"
-            },
-            5: {
-                title: "定量自動截止",
-                badge: "實踐模組 05",
-                pain: "熱門活動報名或小考，老師常常因為人數爆滿在深夜手動關閉表單。這關我們實作原生無外掛的自動定量鎖卷功能。",
-                guide: "<p>1. 請在右側自動截止面板中，將最大回應數上限填入 <strong>「30」</strong> 人。</p><p>2. 於自訂提示欄中輸入您的 <strong>「客製化關閉提示」</strong>（例如：已額滿！）。</p><p>3. 點擊 <strong>「儲存設定」</strong> 按鈕完成儲存！</p>",
-                tutor: "這是原生功能！許多老師會特地下載複雜的第三方 Add-ons 外掛，其實 Google Forms 本身就支援設定日期、秒數、或指定人數定量截止喔！"
-            },
-            6: {
-                title: "試算表重連與大復活",
-                badge: "實踐模組 06",
-                pain: "在行政資料匯流時，不小心誤點『取消連結』或需要重新連結不同試算表。本關練習取消連結並完美接回歷史資料庫。",
-                guide: "<p>1. 點擊綠色試算表右側 <strong>「三個點 (Settings)」</strong> 圖示。</p><p>2. 選擇 <strong>「取消連結表單」</strong> 斷開水管。</p><p>3. 下一步，再次點擊綠色試算表按鈕，並於彈窗中選擇 <strong>「選取現有的試算表」</strong> 接回試算表，完成大復活！</p>",
-                tutor: "重新連結至原有 Sheet 時，系統會自動建立「表單回應 2」分頁並重新灌回所有舊資料，絕對不會遺失。這也是段考成績大匯流的實戰技法！"
+            pt: {
+                header_title: 'Google Forms L1 <span class="text-purple-400">Simulador de Campus Inteligente</span>',
+                header_subtitle: 'Máquina de Estados Realista • Prática de Desminagem 100% sem Login',
+                progress_label: 'Progresso do Desafio:',
+                mobile_toggle_collapse: '<i class="fa-solid fa-angles-up mr-1 animate-pulse"></i> Recolher Instruções (Mais espaço)',
+                mobile_toggle_expand: '<i class="fa-solid fa-angles-down mr-1 animate-pulse"></i> Expandir Instruções (Ver etapas)',
+                step_pain_title: '<i class="fa-solid fa-circle-question text-purple-400"></i> Dificuldade Comum & Obstáculos',
+                step_guide_title: '<i class="fa-solid fa-circle-play"></i> Siga as instruções:',
+                tutor_title: '<i class="fa-solid fa-lightbulb"></i> Dica do Instrutor para Preparação:',
+                module_feedback_text: 'A missão deste módulo prático foi concluída com sucesso!',
+                next_btn_lock: 'Conclua a missão da etapa atual',
+                next_btn_unlock: 'Concluído! Ir para o Módulo de Prática 0',
+                next_btn_all_clear: '🎉 Parabéns! Todos concluídos! Clique para Enviar Feedback ➔',
+                form_file_title: 'Pesquisa da Caderneta Escolar do Ano Letivo 115',
+                tab_questions: 'Perguntas',
+                tab_responses: 'Respostas (0)',
+                tab_settings: 'Configurações',
+                palette_panel_title: '<i class="fa-solid fa-palette text-purple-600 mr-2"></i> Estilo do Tema',
+                choose_banner_label: 'Escolher Imagem do Cabeçalho:',
+                opt_classic: 'Roxo Clássico (Padrão)',
+                opt_pencils: 'Lápis de Cor (Pencils)',
+                banner_text: 'Rede de Contato dos Pais - 1º Semestre de 115',
+                editor_title_val: 'Pesquisa da Caderneta Escolar do Ano Letivo 115',
+                editor_desc_val: 'Olá Pais, por favor reservem alguns minutos para preencher este formulário para que o professor possa estabelecer a caderneta de contatos de emergência deste semestre. Obrigado!',
+                q_phone_badge: 'Pergunta 01',
+                q_phone_title: 'Telefone Celular de Emergência dos Pais',
+                q_phone_type: '<i class="fa-solid fa-paragraph mr-1"></i> Resposta curta',
+                q_phone_val_title: '<i class="fa-solid fa-shield-halved text-indigo-500"></i> Validação de Resposta:',
+                q_phone_status: 'Ativo no Momento',
+                label_val_type: 'Tipo:',
+                val_type_num: 'Número',
+                label_val_rule: 'Regra:',
+                val_rule_len: 'Comprimento igual a',
+                label_val_limit: 'Limite:',
+                q_phone_label: 'Digite aqui para testar como os pais (deve corresponder à regra de validação):',
+                phone_input_placeholder: 'Ex: 0912345678',
+                q_domain_badge: 'Pergunta 02',
+                q_domain_title: 'Permissões de Domínio e Acesso Livre de Pais',
+                q_domain_backend_title: '<i class="fa-solid fa-gears text-rose-500"></i> Painel: Chave de Restrição',
+                q_domain_checkbox_text: 'Restringir aos usuários de [Escola Inteligente]',
+                q_domain_checkbox_sub: 'Permitir respostas apenas para contas do domínio escolar',
+                phone_lock_title: 'Você precisa de permissão',
+                phone_lock_desc: 'Este formulário só pode ser preenchido por usuários confiáveis da Escola Inteligente.',
+                phone_unlock_title: 'Formulário Desbloqueado',
+                phone_unlock_desc: 'Este formulário está aberto a pais externos. Contas comuns do Gmail funcionam perfeitamente!',
+                q_branch_badge: 'Pergunta 03',
+                q_branch_title: 'Você comparecerá à reunião de pais e professores nesta sexta-feira?',
+                q_branch_setting_title: '<i class="fa-solid fa-route text-sky-500"></i> Configurações: Ramificação Inteligente (Branching)',
+                q_branch_choice_a: 'A. Comparecerei no horário',
+                q_branch_choice_b: 'B. Não poderei comparecer',
+                branch_test_desc: '🎉 Configurado com sucesso! Use os botões abaixo para testar a ramificação:',
+                btn_sim_a: 'Simular Opção A ➔',
+                btn_sim_b: 'Simular Opção B ➔',
+                q_limit_badge: 'Pergunta 04',
+                q_limit_title: 'Limite Inteligente Quantitativo (Recurso Nativo)',
+                q_limit_rule_title: '<i class="fa-solid fa-clock-rotate-left text-emerald-500"></i> Configuração: Fechamento Automático',
+                q_limit_cond_label: 'Condição de Fechamento:',
+                q_limit_cond_val: 'Após atingir quantidade específica (Quantitativo)',
+                q_limit_max_label: 'Limite Máximo de Respostas:',
+                limit_num_placeholder: 'Ex: 30',
+                q_limit_msg_label: 'Mensagem personalizada para os respondentes:',
+                limit_msg_placeholder: 'Insira a mensagem aqui...',
+                q_limit_save_btn: 'Salvar Configurações',
+                q_sheets_badge: 'Pergunta 05',
+                q_sheets_title: 'Revinculação e Ressurreição de Planilha de Dados',
+                sheets_status_badge: 'Planilha Vinculada',
+                sheets_status_unlinked: 'Desvinculado da Planilha',
+                sheets_title: 'Pesquisa da Caderneta Escolar do Ano Letivo 115 (Respostas)',
+                sheets_title_unlinked: 'Nenhuma planilha vinculada',
+                unlink_sheets_btn: '<i class="fa-solid fa-link-slash"></i> Desvincular Formulário',
+                download_csv_btn: '<i class="fa-solid fa-download"></i> Baixar Respostas (.csv)',
+                open_sheet_btn: 'Criar / Ver Planilha',
+                modal_sheets_title: 'Planilha do Instrutor para Integração de Dados',
+                th_time: 'Carimbo de data/hora',
+                th_name: 'Nome do Aluno',
+                th_school: 'Escola / Organização',
+                th_tool_rew: 'Ferramenta mais Útil',
+                th_tool_cha: 'Ferramenta mais Desafiadora',
+                th_opinion: 'Opiniões do Workshop',
+                th_favs: 'Recursos Favoritos',
+                mock_row_feedback: 'Este simulador de questionário é incrível! Dá vida a conceitos antes abstratos.',
+                mock_row_favs: 'Validação de Entrada, Ramificações Inteligentes',
+                survey_title: '🎉 Parabéns por dominar os 6 módulos!',
+                survey_desc: 'Isto é uma integração real de dados! Preencha a pesquisa para enviar os dados para a planilha do instrutor.',
+                survey_label_name: 'Nome do Aluno:',
+                survey_placeholder_name: 'Escreva seu nome completo',
+                survey_label_school: 'Escola / Organização:',
+                survey_placeholder_school: 'Escreva sua escola ou instituição',
+                survey_label_tool_rew: 'Ferramenta mais útil hoje:',
+                survey_label_tool_cha: 'Ferramenta mais desafiadora hoje:',
+                survey_label_favs: 'Quais recursos do simulador você mais gostou (Múltipla escolha):',
+                survey_label_opinion: 'Feedback e Experiência do Workshop (mínimo 5 palavras):',
+                survey_placeholder_opinion: 'Escreva suas valiosas opiniões ou experiências sobre este simulador',
+                btn_submit_text: 'Enviar Dados Reais ➔',
+                survey_disclaimer: 'Os dados serão salvos com segurança via no-cors diretamente no banco de dados do instrutor.',
+                chk_opt_1: 'Tema de Lápis',
+                chk_opt_2: 'Validação de Celular',
+                chk_opt_3: 'Desvio de Bloqueio',
+                chk_opt_4: 'Rotas de Ramificação',
+                chk_opt_5: 'Fechamento Automático',
+                chk_opt_6: 'Revinculação de Planilha'
             }
         };
 
-        // 頁面初始化
-        window.onload = function() {
-            switchStep(1);
+        // 關卡引導說明雙語數據 / Guias de Etapas Bilíngues
+        const stepDetails = {
+            zh: {
+                1: {
+                    title: "外觀色彩美化",
+                    badge: "實踐模組 01",
+                    pain: "學校問卷預設的紫色外觀太過冰冷。第一步，讓我們利用自訂主題，更換為極具親和力的教育主題 Banner 圖，拉近與學生的距離！",
+                    guide: "<p>1. 點擊右側模擬器頂部的 <strong>「自訂主題 (調色盤)」</strong> 圖示。</p><p>2. 在彈出的選單中，點選套用 <strong>「彩色鉛筆 (Pencils)」</strong> 橫幅圖示。</p>",
+                    tutor: "自訂主題 Banner 除了視覺美化外，系統還會根據影像主色調，自動調配和諧、適配的背景色，避免產生刺眼的設計配色喔。"
+                },
+                2: {
+                    title: "欄位格式防呆",
+                    badge: "實踐模組 02",
+                    pain: "聯絡資訊防呆！家長輸入錯漏、少一碼手機號碼，會導致導師通訊錄失效。這關我們啟用「簡答題回覆驗證」，限制輸入必須為 10 碼數字。",
+                    guide: "<p>1. 注意：此時右側模擬器已解鎖 <strong>「家長緊急聯絡手機」</strong> 題目卡。</p><p>2. 調整上方限制長度值，請務必將 <strong>「限制長度值」改為「10」</strong>。</p><p>3. 在下方輸入框中 <strong>模擬輸入一個完整 10 碼手機號碼</strong> (如 0912345678) 檢驗防呆是否生效！</p>",
+                    tutor: "在 L1 考核中，簡答題的回覆驗證是必考地雷。開啟此功能時，請務必養成輸入『客製化錯誤提示』的好習慣，家長格式填錯時才能即時自救！"
+                },
+                3: {
+                    title: "解除組織網域限制",
+                    badge: "實踐模組 03",
+                    pain: "親師溝通卡死！學校教育網域預設會勾選『限制網域使用者』，導致校外家長一般 Gmail 點開直接顯示『您需要權限』紅色警告。",
+                    guide: "<p>1. 此時右側家長手機畫面顯示 <strong>『您需要權限』紅色警告</strong>，家長完全打不開表單。</p><p>2. 請在後台設定卡片中，<strong>「取消勾選」</strong> 限制使用者複選框。</p><p>3. 親眼體驗右側家長手機紅色警告消失、滑入正常表單的絲滑感！</p>",
+                    tutor: "這個操作是全台灣資訊組長每學期必備的第一名救火技能！只要是在校外進行的問卷、家長會報名，請一律取消此網域勾選！"
+                },
+                4: {
+                    title: "智慧路徑與分流",
+                    badge: "實踐模組 04",
+                    pain: "不要強迫不出席家長填寫葷食！對於不同作答者，透過『根據答案前往特定區段 (Branching)』分流引導，是最溫暖的問卷體驗。",
+                    guide: "<p>1. 請將選項 <strong>「A. 準時出席」</strong> 旁的下拉選單，指路至 <strong>「前往區段 2 (午餐調查)」</strong>。</p><p>2. 將選項 <strong>「B. 無法出席」</strong> 旁的下拉選單，指路至 <strong>「前往區段 3 (意見委託)」</strong>。</p><p>3. 當指路正確，即可在下方亮起「模擬體驗按鈕」，親自測試分流！</p>",
+                    tutor: "請特別留意：在 L1 小考測驗模式下，若使用分流，每位學生作答題數不同，總分基底會打架。因此，有正式分數計算的考卷絕不能開啟分流路由！"
+                },
+                5: {
+                    title: "定量自動截止",
+                    badge: "實踐模組 05",
+                    pain: "熱門活動報名或小考，老師常常因為人數爆滿在深夜手動關閉表單。這關我們實作原生無外掛的自動定量鎖卷功能。",
+                    guide: "<p>1. 請在右側自動截止面板中，將最大回應數上限填入 <strong>「30」</strong> 人。</p><p>2. 於自訂提示欄中輸入您的 <strong>「客製化關閉提示」</strong>（例如：已額滿！）。</p><p>3. 點擊 <strong>「儲存設定」</strong> 按鈕完成儲存！</p>",
+                    tutor: "這是原生功能！許多老師會特地下載複雜的第三方 Add-ons 外掛，其實 Google Forms 本身就支援設定日期、秒數、或指定人數定量截止喔！"
+                },
+                6: {
+                    title: "試算表重連與大復活",
+                    badge: "實踐模組 06",
+                    pain: "在行政資料匯流時，不小心誤點『取消連結』或需要重新連結不同試算表。本關練習取消連結並完美接回歷史資料庫。",
+                    guide: "<p>1. 點擊綠色試算表右側 <strong>「三個點 (Settings)」</strong> 圖示。</p><p>2. 選擇 <strong>「取消連結表單」</strong> 斷開水管。</p><p>3. 下一步，再次點擊綠色試算表按鈕，並於彈窗中選擇 <strong>「選取現有的試算表」</strong> 接回試算表，完成大復活！</p>",
+                    tutor: "重新連結至原有 Sheet 時，系統會自動建立「表單回應 2」分頁並重新灌回所有舊資料，絕對不會遺失。這也是段考成績大匯流的實戰技法！"
+                }
+            },
+            pt: {
+                1: {
+                    title: "Estética Visual e Temas",
+                    badge: "MÓDULO PRÁTICO 01",
+                    pain: "O roxo padrão do formulário parece frio. Primeiro, vamos usar as configurações de tema para mudá-lo para um banner de Lápis de Cor muito mais acolhedor para os alunos!",
+                    guide: "<p>1. Clique no ícone de <strong>「Paleta de Cores (Tema)」</strong> no topo do simulador à direita.</p><p>2. No painel suspenso, clique e selecione o banner <strong>「Lápis de Cor (Pencils)」</strong>.</p>",
+                    tutor: "Mudar o banner não só altera o topo, mas o sistema também recalcula as cores de fundo ideais para manter a legibilidade sem agredir os olhos."
+                },
+                2: {
+                    title: "Validação de Formatos",
+                    badge: "MÓDULO PRÁTICO 02",
+                    pain: "Prevenção de erros! Números incompletos inseridos por pais invalidam contatos de emergência. Usaremos a validação de respostas curtas para exigir exatamente 10 dígitos.",
+                    guide: "<p>1. Nota: O cartão da pergunta <strong>「Telefone de Emergência」</strong> foi liberado à direita.</p><p>2. Ajuste o valor de validação inserindo exatamente <strong>「10」</strong> no campo de limite.</p><p>3. Digite um <strong>celular simulado de 10 dígitos</strong> (ex: 0912345678) para validar a resposta!</p>",
+                    tutor: "No exame L1, validações são essenciais. Lembre-se sempre de colocar uma mensagem de erro personalizada para ajudar quem está preenchendo o formulário!"
+                },
+                3: {
+                    title: "Desvincular Restrições",
+                    badge: "MÓDULO PRÁTICO 03",
+                    pain: "Comunicação bloqueada! Por padrão, os domínios escolares restringem o acesso apenas a contas internas, exibindo 'Você precisa de permissão' para os pais externos.",
+                    guide: "<p>1. O simulador de celular à direita está exibindo a mensagem vermelha de <strong>『Você precisa de permissão』</strong>.</p><p>2. No painel de controle esquerdo, <strong>「desmarque」</strong> a caixa de restrição de domínio.</p><p>3. Veja em tempo real a restrição sumir e o formulário aparecer perfeitamente no celular dos pais!</p>",
+                    tutor: "Esta é a habilidade de socorro nº 1 para administradores de TI escolar! Para pesquisas externas ou inscrições de pais, sempre lembre de desmarcar isso."
+                },
+                4: {
+                    title: "Rotas de Ramificação",
+                    badge: "MÓDULO PRÁTICO 04",
+                    pain: "Evite perguntar preferências de refeição a quem não vai comparecer! Conduzir os respondentes para seções específicas traz uma experiência fluida e inteligente.",
+                    guide: "<p>1. Configure a opção <strong>「A. Comparecerei no horário」</strong> para <strong>「Ir para a seção 2 (Pesquisa de Almoço)」</strong>.</p><p>2. Configure a opção <strong>「B. Não poderei comparecer」</strong> para <strong>「Ir para a seção 3 (Delegação de Opiniões)」</strong>.</p><p>3. Quando as rotas estiverem corretas, os botões de simulação abaixo serão habilitados para testes!</p>",
+                    tutor: "Nota: No formato de avaliações L1 pontuadas, ramificações podem dificultar o cálculo correto de pontuações automáticas. Use apenas para pesquisas e formulários!"
+                },
+                5: {
+                    title: "Fechamento Automático",
+                    badge: "MÓDULO PRÁTICO 05",
+                    pain: "Em inscrições limitadas, os professores costumam ter que fechar formulários manualmente de madrugada. Vamos criar um limite automático nativo, livre de extensões.",
+                    guide: "<p>1. No painel de limite à direita, digite o limite máximo de respostas de <strong>「30」</strong>.</p><p>2. No campo de aviso personalizado, digite uma <strong>「Mensagem de Fechamento」</strong> (ex: Vagas preenchidas!).</p><p>3. Clique em <strong>「Salvar Configurações」</strong> para salvar!</p>",
+                    tutor: "Este é um recurso nativo! Evite complementos pesados e configure limites de respostas, data ou hora de forma nativa e segura."
+                },
+                6: {
+                    title: "Reconectar Planilhas",
+                    badge: "MÓDULO PRÁTICO 06",
+                    pain: "Durante a integração administrativa, você pode acidentalmente desvincular ou precisar conectar uma nova planilha. Aprenda a reconectar sem perder o histórico.",
+                    guide: "<p>1. Clique no ícone de <strong>「Três Pontos」</strong> no cartão verde da planilha.</p><p>2. Selecione <strong>「Desvincular formulário」</strong> para cortar a conexão.</p><p>3. A seguir, clique no botão de planilha verde e selecione <strong>「Selecionar planilha existente」</strong> para restabelecer a conexão de dados!</p>",
+                    tutor: "Ao reconectar a uma planilha existente, o sistema cria uma aba chamada 'Respostas ao formulário 2' e sincroniza tudo sem perda de dados!"
+                }
+            }
         };
 
-        // 📱 行動端收納功能切換控制
+        // 頁面初始化 / Inicialização
+        window.onload = function() {
+            setLanguage('zh'); // 預設使用中文 / Padrão em Chinês
+        };
+
+        // 雙語切換核心機制 / Função de Alternância de Idioma
+        function setLanguage(lang) {
+            currentLang = lang;
+            
+            // 更新切換按鈕狀態 / Atualizar estilo de botões seletores
+            const zhBtn = document.getElementById("lang-zh-btn");
+            const ptBtn = document.getElementById("lang-pt-btn");
+            if (lang === 'zh') {
+                zhBtn.className = "px-2.5 py-1.5 text-xs font-black rounded-lg transition-all bg-purple-600 text-white";
+                ptBtn.className = "px-2.5 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200";
+            } else {
+                ptBtn.className = "px-2.5 py-1.5 text-xs font-black rounded-lg transition-all bg-purple-600 text-white";
+                zhBtn.className = "px-2.5 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200";
+            }
+
+            // 逐一更新靜態與動態元素 / Atualizar textos estáticos e dinâmicos
+            const pack = langPack[lang];
+            
+            document.getElementById("header-title").innerHTML = pack.header_title;
+            document.getElementById("header-subtitle").innerText = pack.header_subtitle;
+            document.getElementById("progress-label").innerText = pack.progress_label;
+            document.getElementById("step-pain-title").innerHTML = pack.step_pain_title;
+            document.getElementById("step-guide-title").innerHTML = pack.step_guide_title;
+            document.getElementById("tutor-title").innerHTML = pack.tutor_title;
+            document.getElementById("module-feedback-text").innerText = pack.module_feedback_text;
+
+            // Forms 頂部欄位 / Cabeçalhos do Simulador
+            document.getElementById("form-file-title").innerText = pack.form_file_title;
+            document.getElementById("questions-tab-btn").innerText = pack.tab_questions;
+            document.getElementById("responses-tab-btn").innerText = pack.tab_responses;
+            document.getElementById("settings-tab-btn").innerText = pack.tab_settings;
+            document.getElementById("send-btn").innerText = lang === 'zh' ? '傳送' : 'Enviar';
+
+            // 工具列提示 / Tooltips de ferramentas
+            document.getElementById("tool-add").title = lang === 'zh' ? '新增問題' : 'Adicionar pergunta';
+            document.getElementById("tool-import").title = lang === 'zh' ? '匯入問題' : 'Importar perguntas';
+            document.getElementById("tool-text").title = lang === 'zh' ? '新增標題與說明' : 'Adicionar título e descrição';
+            document.getElementById("tool-image").title = lang === 'zh' ? '新增圖片' : 'Adicionar imagem';
+            document.getElementById("tool-video").title = lang === 'zh' ? '新增影片' : 'Adicionar vídeo';
+            document.getElementById("tool-section").title = lang === 'zh' ? '新增區段' : 'Adicionar seção';
+
+            // 主題設定選單 / Painel de Tema
+            document.getElementById("palette-panel-title").innerHTML = pack.palette_panel_title;
+            document.getElementById("choose-banner-label").innerText = pack.choose_banner_label;
+            document.getElementById("opt-classic").innerText = pack.opt_classic;
+            document.getElementById("opt-pencils").innerText = pack.opt_pencils;
+            
+            // 根據是否已通關第一步來載入 Banner / Carregar banner conforme progresso
+            if (!taskStatus[1]) {
+                document.getElementById("banner-text").innerText = pack.banner_text;
+            } else {
+                document.getElementById("banner-text").innerText = lang === 'zh' ? '🌈 彩色鉛筆校園網網' : '🌈 Rede de Cabeçalho de Lápis';
+            }
+
+            // 編輯器主卡片 / Cards do Editor
+            document.getElementById("editor-title-val").value = pack.editor_title_val;
+            document.getElementById("editor-desc-val").value = pack.editor_desc_val;
+
+            // 關卡 02 手機題卡 / Etapa 02 - Card de Celular
+            document.getElementById("q-phone-badge").innerText = pack.q_phone_badge;
+            document.getElementById("q-phone-title").value = pack.q_phone_title;
+            document.getElementById("q-phone-type").innerHTML = pack.q_phone_type;
+            document.getElementById("q-phone-val-title").innerHTML = pack.q_phone_val_title;
+            document.getElementById("q-phone-status").innerText = pack.q_phone_status;
+            document.getElementById("label-val-type").innerText = pack.label_val_type;
+            document.getElementById("val-type-num").innerText = pack.val_type_num;
+            document.getElementById("label-val-rule").innerText = pack.label_val_rule;
+            document.getElementById("val-rule-len").innerText = pack.val_rule_len;
+            document.getElementById("label-val-limit").innerText = pack.label_val_limit;
+            document.getElementById("q-phone-label").innerText = pack.q_phone_label;
+            document.getElementById("phone-input").placeholder = pack.phone_input_placeholder;
+
+            // 關卡 03 網域限制卡 / Etapa 03 - Domínio
+            document.getElementById("q-domain-badge").innerText = pack.q_domain_badge;
+            document.getElementById("q-domain-title").innerText = pack.q_domain_title;
+            document.getElementById("q-domain-backend-title").innerHTML = pack.q_domain_backend_title;
+            document.getElementById("q-domain-checkbox-text").innerText = pack.q_domain_checkbox_text;
+            document.getElementById("q-domain-checkbox-sub").innerText = pack.q_domain_checkbox_sub;
+            
+            const domainCb = document.getElementById("domain-lock-cb");
+            if (domainCb.checked) {
+                document.getElementById("phone-lock-title").innerText = pack.phone_lock_title;
+                document.getElementById("phone-lock-desc").innerText = pack.phone_lock_desc;
+            } else {
+                document.getElementById("phone-lock-title").innerText = pack.phone_unlock_title;
+                document.getElementById("phone-lock-desc").innerText = pack.phone_unlock_desc;
+            }
+
+            // 關卡 04 智慧分流卡 / Etapa 04 - Ramificação
+            document.getElementById("q-branch-badge").innerText = pack.q_branch_badge;
+            document.getElementById("q-branch-title").innerText = pack.q_branch_title;
+            document.getElementById("q-branch-setting-title").innerHTML = pack.q_branch_setting_title;
+            document.getElementById("q-branch-choice-a").innerText = pack.q_branch_choice_a;
+            document.getElementById("q-branch-choice-b").innerText = pack.q_branch_choice_b;
+            document.getElementById("branch-test-desc").innerText = pack.branch_test_desc;
+            document.getElementById("btn-sim-a").innerText = pack.btn_sim_a;
+            document.getElementById("btn-sim-b").innerText = pack.btn_sim_b;
+            
+            // 下拉選項更新 / Atualizar opções de seleção
+            const rA = document.getElementById("route-a");
+            const rB = document.getElementById("route-b");
+            const rAVal = rA.value;
+            const rBVal = rB.value;
+            
+            rA.options[0].text = lang === 'zh' ? '繼續前往下一個區段' : 'Continuar para a próxima seção';
+            rA.options[1].text = lang === 'zh' ? '前往區段 2 (午餐調查)' : 'Ir para a seção 2 (Pesquisa de Almoço)';
+            rA.options[2].text = lang === 'zh' ? '前往區段 3 (意見委託)' : 'Ir para a seção 3 (Delegação de Opiniões)';
+            
+            rB.options[0].text = lang === 'zh' ? '繼續前往下一個區段' : 'Continuar para a próxima seção';
+            rB.options[1].text = lang === 'zh' ? '前往區段 2 (午餐調查)' : 'Ir para a seção 2 (Pesquisa de Almoço)';
+            rB.options[2].text = lang === 'zh' ? '前往區段 3 (意見委託)' : 'Ir para a seção 3 (Delegação de Opiniões)';
+
+            // 關卡 05 定量截止卡 / Etapa 05 - Limite
+            document.getElementById("q-limit-badge").innerText = pack.q_limit_badge;
+            document.getElementById("q-limit-title").innerText = pack.q_limit_title;
+            document.getElementById("q-limit-rule-title").innerHTML = pack.q_limit_rule_title;
+            document.getElementById("q-limit-cond-label").innerText = pack.q_limit_cond_label;
+            document.getElementById("q-limit-cond-val").innerText = pack.q_limit_cond_val;
+            document.getElementById("q-limit-max-label").innerText = pack.q_limit_max_label;
+            document.getElementById("limit-num").placeholder = pack.limit_num_placeholder;
+            document.getElementById("q-limit-msg-label").innerText = pack.q_limit_msg_label;
+            document.getElementById("limit-msg").placeholder = pack.limit_msg_placeholder;
+            document.getElementById("q-limit-save-btn").innerText = pack.q_limit_save_btn;
+
+            // 關卡 06 Sheets 連結 / Etapa 06 - Planilha
+            document.getElementById("q-sheets-badge").innerText = pack.q_sheets_badge;
+            document.getElementById("q-sheets-title").innerText = pack.q_sheets_title;
+            
+            if (unlinkedSheetsState) {
+                document.getElementById("sheets-status-badge").innerText = pack.sheets_status_unlinked;
+                document.getElementById("sheets-status-badge").className = "bg-rose-100 text-rose-800 text-xs px-2.5 py-0.5 rounded-full font-black inline-block";
+                document.getElementById("sheets-title").innerText = pack.sheets_title_unlinked;
+            } else {
+                document.getElementById("sheets-status-badge").innerText = pack.sheets_status_badge;
+                document.getElementById("sheets-status-badge").className = "bg-emerald-100 text-emerald-800 text-[10px] md:text-xs px-2 py-0.5 rounded-full font-black inline-block";
+                document.getElementById("sheets-title").innerText = pack.sheets_title;
+            }
+            
+            document.getElementById("unlink-sheets-btn").innerHTML = pack.unlink_sheets_btn;
+            document.getElementById("download-csv-btn").innerHTML = pack.download_csv_btn;
+            document.getElementById("open-sheet-btn").innerText = pack.open_sheet_btn;
+
+            // 數據網格 Modal / Tabela de Planilha do Instrutor
+            document.getElementById("modal-sheets-title").innerText = pack.modal_sheets_title;
+            document.getElementById("th-time").innerText = pack.th_time;
+            document.getElementById("th-name").innerText = pack.th_name;
+            document.getElementById("th-school").innerText = pack.th_school;
+            document.getElementById("th-tool-rew").innerText = pack.th_tool_rew;
+            document.getElementById("th-tool-cha").innerText = pack.th_tool_cha;
+            document.getElementById("th-opinion").innerText = pack.th_opinion;
+            document.getElementById("th-favs").innerText = pack.th_favs;
+            document.getElementById("mock-row-feedback").innerText = pack.mock_row_feedback;
+            document.getElementById("mock-row-favs").innerText = pack.mock_row_favs;
+
+            // 大問卷全通關 Popup / Modal Final de Conclusão
+            document.getElementById("survey-title").innerText = pack.survey_title;
+            document.getElementById("survey-desc").innerText = pack.survey_desc;
+            document.getElementById("survey-label-name").innerText = pack.survey_label_name;
+            document.getElementById("real-survey-form").name.placeholder = pack.survey_placeholder_name;
+            document.getElementById("survey-label-school").innerText = pack.survey_label_school;
+            document.getElementById("real-survey-form").school.placeholder = pack.survey_placeholder_school;
+            document.getElementById("survey-label-tool-rew").innerText = pack.survey_label_tool_rew;
+            document.getElementById("survey-label-tool-cha").innerText = pack.survey_label_tool_cha;
+            document.getElementById("survey-label-favs").innerText = pack.survey_label_favs;
+            document.getElementById("survey-label-opinion").innerText = pack.survey_label_opinion;
+            document.getElementById("real-survey-form").opinion.placeholder = pack.survey_placeholder_opinion;
+            document.getElementById("btn-submit-text").innerText = pack.btn_submit_text;
+            document.getElementById("survey-disclaimer").innerText = pack.survey_disclaimer;
+
+            // 選項 Checkboxes
+            document.getElementById("chk-opt-1").innerText = pack.chk_opt_1;
+            document.getElementById("chk-opt-2").innerText = pack.chk_opt_2;
+            document.getElementById("chk-opt-3").innerText = pack.chk_opt_3;
+            document.getElementById("chk-opt-4").innerText = pack.chk_opt_4;
+            document.getElementById("chk-opt-5").innerText = pack.chk_opt_5;
+            document.getElementById("chk-opt-6").innerText = pack.chk_opt_6;
+
+            // 重新刷新當前活動關卡 / Sincronizar dados dinâmicos da etapa ativa
+            switchStep(currentStep);
+        }
+
+        // 行動端收合控制 / Toggle para Mobile
         function toggleMobileGuide() {
             const content = document.getElementById("collapsible-guide-content");
             const btn = document.getElementById("mobile-toggle-btn");
             isMobileGuideCollapsed = !isMobileGuideCollapsed;
             
+            const btnSpan = btn.querySelector("span");
             if (isMobileGuideCollapsed) {
                 content.classList.add("hidden");
-                btn.innerHTML = `<span><i class="fa-solid fa-angles-down mr-1 animate-pulse"></i> 展開任務說明（查看解鎖步驟）</span>`;
+                btnSpan.innerHTML = langPack[currentLang].mobile_toggle_expand;
                 btn.classList.remove("text-purple-400");
                 btn.classList.add("text-slate-300", "bg-slate-800/80");
             } else {
                 content.classList.remove("hidden");
-                btn.innerHTML = `<span><i class="fa-solid fa-angles-up mr-1"></i> 收合任務說明（釋放操作空間）</span>`;
+                btnSpan.innerHTML = langPack[currentLang].mobile_toggle_collapse;
                 btn.classList.remove("text-slate-300", "bg-slate-800/80");
                 btn.classList.add("text-purple-400");
             }
         }
 
-        // 關卡切換狀態管理
+        // 關卡切換狀態管理 / Gerenciamento das Etapas do Simulador
         function switchStep(stepNum) {
             currentStep = stepNum;
             
-            // 📱 貼心設計：切換步驟時自動展開說明，以便學員能看到新關卡的指示
+            // 行動端預設展開 / Abrir painel no mobile ao trocar de etapa
             if (isMobileGuideCollapsed) {
                 toggleMobileGuide();
             }
 
-            // 更新上方 Tab CSS 樣式
+            // 更新頁籤樣式 / Atualizar estilo visual das abas de controle
             for (let i = 1; i <= 6; i++) {
                 const btn = document.getElementById(`tab-${i}`);
                 if (i === stepNum) {
@@ -691,14 +1140,14 @@
                 }
             }
 
-            // 更新左半邊導航說明
-            const data = stepDetails[stepNum];
+            // 載入當前語言包關卡數據 / Carregar dados da etapa ativa com base no idioma
+            const data = stepDetails[currentLang][stepNum];
             document.getElementById("step-badge").innerText = data.badge;
             document.getElementById("step-title").innerText = data.title;
             document.getElementById("step-pain").innerText = data.pain;
             document.getElementById("step-guide").innerHTML = data.guide;
             
-            // 溫馨提示展示
+            // 溫馨提示展示 / Dicas do Instrutor
             const tBox = document.getElementById("tutor-box");
             if (data.tutor) {
                 document.getElementById("tutor-text").innerText = data.tutor;
@@ -707,7 +1156,7 @@
                 tBox.classList.add("hidden");
             }
 
-            // 右側卡片可視度管理 (智慧關卡鎖：第一關時完全隱藏後面題卡)
+            // 控制右側對應題卡的可視度 / Gerenciar visibilidade dos cards correspondentes
             document.getElementById("q-phone-card").classList.toggle("hidden", stepNum !== 2);
             document.getElementById("q-restrict-card").classList.toggle("hidden", stepNum !== 3);
             document.getElementById("q-branch-card").classList.toggle("hidden", stepNum !== 4);
@@ -717,14 +1166,13 @@
             updateProgressUI();
         }
 
-        // 更新進度與按鈕狀態
+        // 更新進度與按鈕狀態 / Atualizar Barra de Progresso e Botões
         function updateProgressUI() {
-            // 更新進度條
             const percent = (currentStep / 6) * 100;
             document.getElementById("progress-bar").style.width = `${percent}%`;
             document.getElementById("progress-text").innerText = `${currentStep} / 6`;
 
-            // 上方頁籤動態通關打勾 ✓
+            // 動態打勾 ✓ / Adicionar sinal de verificação de conclusão
             for (let i = 1; i <= 6; i++) {
                 const checkBadge = document.getElementById(`check-${i}`);
                 if (taskStatus[i]) {
@@ -734,20 +1182,19 @@
                 }
             }
 
-            // 下方下一步控制鈕
             const nextBtn = document.getElementById("next-btn");
             const btnText = document.getElementById("next-btn-text");
             const btnIcon = document.getElementById("next-btn-icon");
             const feedback = document.getElementById("module-feedback");
 
-            // 檢查 6 個是否全部完成了
+            // 檢查是否全關卡通關 / Verificar se tudo foi concluído
             const allCleared = Object.values(taskStatus).every(val => val === true);
 
             if (allCleared) {
                 feedback.classList.remove("hidden");
                 nextBtn.disabled = false;
                 nextBtn.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 md:py-5 rounded-2xl transition-all flex items-center justify-center gap-2 md:gap-3 text-base md:text-xl shadow-lg shadow-emerald-500/20 animate-bounce cursor-pointer";
-                btnText.innerText = "🎉 恭喜全通關！點擊填寫心得大匯流 ➔";
+                btnText.innerText = langPack[currentLang].next_btn_all_clear;
                 btnIcon.className = "fa-solid fa-trophy";
                 return;
             }
@@ -758,18 +1205,23 @@
                 feedback.classList.remove("hidden");
                 nextBtn.disabled = false;
                 nextBtn.className = "w-full bg-purple-600 hover:bg-purple-700 text-white font-black py-4 md:py-5 rounded-2xl transition-all flex items-center justify-center gap-2 md:gap-3 text-base md:text-xl shadow-lg shadow-purple-500/10 cursor-pointer";
-                btnText.innerText = (currentStep < 6) ? `打通！前往實踐模組 0${currentStep + 1} ➔` : "請完成未通關的其他關卡";
+                
+                if (currentStep < 6) {
+                    btnText.innerText = `${langPack[currentLang].next_btn_unlock}0${currentStep + 1} ➔`;
+                } else {
+                    btnText.innerText = currentLang === 'zh' ? '請完成未通關的其他關卡' : 'Complete as etapas restantes';
+                }
                 btnIcon.className = "fa-solid fa-arrow-right";
             } else {
                 feedback.classList.add("hidden");
                 nextBtn.disabled = true;
                 nextBtn.className = "w-full bg-slate-800 text-slate-500 font-black py-4 md:py-5 rounded-2xl transition-all flex items-center justify-center gap-2 md:gap-3 text-base md:text-xl shadow-lg disabled:cursor-not-allowed";
-                btnText.innerText = "請完成當前關卡任務";
+                btnText.innerText = langPack[currentLang].next_btn_lock;
                 btnIcon.className = "fa-solid fa-lock";
             }
         }
 
-        // 處理主前進按鈕點擊
+        // 下一步操作 / Ir para Próxima Ação
         function handleNextAction() {
             const allCleared = Object.values(taskStatus).every(val => val === true);
             if (allCleared) {
@@ -783,7 +1235,7 @@
         }
 
         // ========================================================
-        // 關卡 01：自訂主題控制
+        // 關卡 01：自訂主題控制 / Etapa 01 - Customização do Tema
         // ========================================================
         function clickThemePalette() {
             toggleThemePanel(document.getElementById("theme-palette-panel").classList.contains("hidden"));
@@ -802,27 +1254,33 @@
                 banner.style.backgroundImage = "url('https://static.vecteezy.com/system/resources/previews/072/745/614/non_2x/digital-learning-environment-students-illustration-vector.jpg')";
                 pencilsOpt.className = "flex flex-col items-center border-2 border-purple-500 rounded-xl p-1.5 md:p-2 bg-purple-50/50";
                 colorBar.className = "w-full h-2 md:h-2.5 bg-teal-600 rounded-t-full absolute top-0 left-0";
+                document.getElementById("banner-text").innerText = currentLang === 'zh' ? '🌈 彩色鉛筆校園網' : '🌈 Rede de Cabeçalho de Lápis';
                 
                 if (currentStep === 1) {
                     taskStatus[1] = true;
-                    showToast("🎨 成功套用「彩色鉛筆」！表單色調已智慧調和。");
+                    showToast(currentLang === 'zh' ? '🎨 成功套用「彩色鉛筆」！表單色調已智慧調和。' : '🎨 Tema "Lápis de Cor" aplicado com sucesso! Cores harmonizadas de forma inteligente.');
                     updateProgressUI();
                 }
             } else {
                 banner.style.backgroundImage = "url('https://images.unsplash.com/photo-1510070112810-d4e9a46d9e91?auto=format&fit=crop&w=1200&q=80')";
                 pencilsOpt.className = "flex flex-col items-center border-2 border-slate-200 hover:border-purple-300 rounded-xl p-1.5 md:p-2 bg-white";
                 colorBar.className = "w-full h-2 md:h-2.5 bg-purple-700 rounded-t-full absolute top-0 left-0";
+                document.getElementById("banner-text").innerText = langPack[currentLang].banner_text;
             }
         }
 
         // ========================================================
-        // 關卡 02：手機驗證控制
+        // 關卡 02：手機驗證控制 / Etapa 02 - Validação de Resposta
         // ========================================================
         function onRuleChange() {
             const ruleVal = document.getElementById("v-val").value;
             const warnBox = document.getElementById("tutor-box");
             if (ruleVal != "10") {
-                document.getElementById("tutor-text").innerText = "⚠️ 長度驗證已被更改為 " + ruleVal + "。為確保能精準攔截家長打錯的電話，請務必把「限制長度值」輸入為「10」碼喔！";
+                if (currentLang === 'zh') {
+                    document.getElementById("tutor-text").innerText = "⚠️ 長度驗證已被更改為 " + ruleVal + "。為確保能精準攔截家長打錯的電話，請務必把「限制長度值」輸入為「10」碼喔！";
+                } else {
+                    document.getElementById("tutor-text").innerText = "⚠️ A validação de comprimento foi alterada para " + ruleVal + ". Para garantir a攔截 corretada telefone dos pais, insira exatamente o valor de '10'!";
+                }
                 warnBox.classList.remove("hidden");
                 taskStatus[2] = false;
             } else {
@@ -836,24 +1294,27 @@
 
             const ruleVal = document.getElementById("v-val").value;
             const inputVal = document.getElementById("phone-input").value;
-            const isNum = /^\d+$/.test(inputVal); // 純數字
+            const isNum = /^\d+$/.test(inputVal);
 
             const feedback = document.getElementById("phone-feedback");
             const err = document.getElementById("phone-err");
 
-            // 當設定限制為 10 碼，且打字輸入恰好為 10 碼數字時
             if (ruleVal == "10" && inputVal.length === 10 && isNum) {
                 feedback.classList.remove("hidden");
                 err.classList.add("hidden");
                 taskStatus[2] = true;
-                showToast("📞 防呆手機完全符合 10 碼長度！成功過濾錯誤輸入！");
+                showToast(currentLang === 'zh' ? '📞 防呆手機完全符合 10 碼長度！成功過濾錯誤輸入！' : '📞 Formato de celular de 10 dígitos validado com sucesso! Filtro de erros ativo!');
                 updateProgressUI();
             } else {
                 feedback.classList.add("hidden");
                 taskStatus[2] = false;
                 if (inputVal.length > 0 && (!isNum || inputVal.length !== parseInt(ruleVal))) {
                     err.classList.remove("hidden");
-                    err.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> 請重新輸入符合當前限制 (${ruleVal} 碼數字) 的手機格式！`;
+                    if (currentLang === 'zh') {
+                        err.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> 請重新輸入符合當前限制 (${ruleVal} 碼數字) 的手機格式！`;
+                    } else {
+                        err.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> Reinsira o formato correto atendendo ao limite (${ruleVal} dígitos numéricos)!`;
+                    }
                 } else {
                     err.classList.add("hidden");
                 }
@@ -862,23 +1323,23 @@
         }
 
         // ========================================================
-        // 關卡 03：解除組織網域鎖限制
+        // 關卡 03：解除組織網域限制 / Etapa 03 - Domínio Educacional
         // ========================================================
         function toggleDomainLock() {
             const cb = document.getElementById("domain-lock-cb");
             const screen = document.getElementById("phone-screen");
 
             if (!cb.checked) {
-                // 解鎖！
+                // 解鎖狀態
                 screen.className = "flex-1 bg-emerald-600 text-white rounded-[20px] md:rounded-[24px] p-3 md:p-4 flex flex-col items-center justify-center text-center gap-2 md:gap-3 transition-all duration-500";
                 screen.innerHTML = `
                     <i class="fa-solid fa-circle-check text-3xl md:text-5xl text-white"></i>
-                    <h5 class="text-sm md:text-lg font-black">表單填寫暢通</h5>
-                    <p class="text-[10px] md:text-xs text-emerald-100 leading-relaxed">此表單已對外部家長開放，一般 Gmail 填寫暢通不卡關！</p>
+                    <h5 class="text-sm md:text-lg font-black">${langPack[currentLang].phone_unlock_title}</h5>
+                    <p class="text-[10px] md:text-xs text-emerald-100 leading-relaxed">${langPack[currentLang].phone_unlock_desc}</p>
                 `;
                 if (currentStep === 3) {
                     taskStatus[3] = true;
-                    showToast("🌐 成功關閉網域鎖！校外家長現在可以用個人 Gmail 順利提交了。");
+                    showToast(currentLang === 'zh' ? '🌐 成功關閉網域鎖！校外家長現在可以用個人 Gmail 順利提交了。' : '🌐 Bloqueio de domínio desativado! Pais externos agora podem preencher com Gmail comum.');
                     updateProgressUI();
                 }
             } else {
@@ -886,8 +1347,8 @@
                 screen.className = "flex-1 bg-rose-500 text-white rounded-[20px] md:rounded-[24px] p-3 md:p-4 flex flex-col items-center justify-center text-center gap-2 md:gap-3 transition-all duration-500";
                 screen.innerHTML = `
                     <i class="fa-solid fa-lock text-3xl md:text-5xl animate-bounce"></i>
-                    <h5 class="text-sm md:text-lg font-black">您需要權限</h5>
-                    <p class="text-[10px] md:text-xs text-rose-100 leading-relaxed">這份表單只能供智慧國小組織內部的信任使用者填寫。</p>
+                    <h5 class="text-sm md:text-lg font-black">${langPack[currentLang].phone_lock_title}</h5>
+                    <p class="text-[10px] md:text-xs text-rose-100 leading-relaxed">${langPack[currentLang].phone_lock_desc}</p>
                 `;
                 taskStatus[3] = false;
                 updateProgressUI();
@@ -895,7 +1356,7 @@
         }
 
         // ========================================================
-        // 關卡 04：分流智慧路由
+        // 關卡 04：分流智慧路由 / Etapa 04 - Ramificação de Páginas
         // ========================================================
         function verifyBranchRules() {
             if (currentStep !== 4) return;
@@ -904,11 +1365,11 @@
             const rB = document.getElementById("route-b").value;
             const testZone = document.getElementById("branch-test-zone");
 
-            // A 指路 sec2 (午餐) 且 B 指路 sec3 (意見)
+            // A 導至 sec2 且 B 導至 sec3
             if (rA === "sec2" && rB === "sec3") {
                 testZone.classList.remove("hidden");
                 taskStatus[4] = true;
-                showToast("🗺️ 成功規劃差異化路徑！請點擊測試按鈕體驗真實分流效果。");
+                showToast(currentLang === 'zh' ? '🗺️ 成功規劃差異化路徑！請點擊測試按鈕體驗真實分流效果。' : '🗺️ Roteamento de ramificação configurado! Use os botões de simulação para testar.');
                 updateProgressUI();
             } else {
                 testZone.classList.add("hidden");
@@ -919,14 +1380,22 @@
 
         function simulateBranchTest(choice) {
             if (choice === 'A') {
-                showToast("🍽️ 模擬填答：因選擇「A. 準時出席」，下一步系統自動滑入【區段 2：午餐鋪素統計】！");
+                if (currentLang === 'zh') {
+                    showToast("🍽️ 模擬填答：因選擇「A. 準時出席」，下一步系統自動滑入【區段 2：午餐調查統計】！");
+                } else {
+                    showToast("🍽️ Simulação: Devido à escolha de 'A. Comparecer', o sistema guiará automaticamente para a [Seção 2: Almoço]!");
+                }
             } else {
-                showToast("✍️ 模擬填答：因選擇「B. 無法出席」，下一步直接略過午餐，滑入【區段 3：家長意見委託】！");
+                if (currentLang === 'zh') {
+                    showToast("✍️ 模擬填答：因選擇「B. 無法出席」，下一步直接略過午餐，滑入【區段 3：家長意見委託】！");
+                } else {
+                    showToast("✍️ Simulação: Devido à escolha de 'B. Não comparecer', o sistema pulará o almoço e guiará para a [Seção 3: Delegação de Opiniões]!");
+                }
             }
         }
 
         // ========================================================
-        // 關卡 05：智慧自動定量截止
+        // 關卡 05：智慧自動定量截止 / Etapa 05 - Limite Automático
         // ========================================================
         function saveLimitRules() {
             if (currentStep !== 5) return;
@@ -936,45 +1405,58 @@
 
             if (limitNum == "30" && limitMsg.trim().length > 0) {
                 taskStatus[5] = true;
-                showToast(`⏱️ 自動截止已生效！達 ${limitNum} 人時自動停止回覆，並自訂顯示：${limitMsg}`);
+                if (currentLang === 'zh') {
+                    showToast(`⏱️ 自動截止已生效！達 ${limitNum} 人時自動停止回覆，並自訂顯示：${limitMsg}`);
+                } else {
+                    showToast(`⏱️ Fechamento automático ativo! Interromperá após ${limitNum} respostas. Mensagem: ${limitMsg}`);
+                }
                 updateProgressUI();
             } else {
-                showToast("❌ 儲存失敗！限額請輸入「30」且自訂提示內容不可為空。");
+                if (currentLang === 'zh') {
+                    showToast("❌ 儲存失敗！限額請輸入「30」且自訂提示內容不可為空。");
+                } else {
+                    showToast("❌ Falha ao salvar! O limite deve ser '30' e a mensagem personalizada não pode estar vazia.");
+                }
                 taskStatus[5] = false;
                 updateProgressUI();
             }
         }
 
         // ========================================================
-        // 關卡 06：試算表重新連結
+        // 關卡 06：試算表重新連結 / Etapa 06 - Sincronização de Planilha
         // ========================================================
         function toggleSheetsDropdown() {
             const dropdown = document.getElementById("sheets-dropdown");
-            dropdown.classList.toggle("hidden");
+            dropdown.classList.contains("hidden") ? dropdown.classList.remove("hidden") : dropdown.classList.add("hidden");
         }
 
         function unlinkSheets() {
             document.getElementById("sheets-dropdown").classList.add("hidden");
-            document.getElementById("sheets-status-badge").innerText = "已中斷與試算表連結";
-            document.getElementById("sheets-status-badge").className = "bg-rose-100 text-rose-800 text-xs px-2.5 py-0.5 rounded-full font-black inline-block";
-            document.getElementById("sheets-title").innerText = "未連結任何試算表";
+            unlinkedSheetsState = true;
             
-            unlinkedSheetsState = true; 
-            showToast("✂️ 試算表已被拔線！歷史數據安全保存在雲端硬碟。");
+            document.getElementById("sheets-status-badge").innerText = langPack[currentLang].sheets_status_unlinked;
+            document.getElementById("sheets-status-badge").className = "bg-rose-100 text-rose-800 text-[10px] md:text-xs px-2.5 py-0.5 rounded-full font-black inline-block";
+            document.getElementById("sheets-title").innerText = langPack[currentLang].sheets_title_unlinked;
+            
+            showToast(currentLang === 'zh' ? '✂️ 試算表已被拔線！歷史數據安全保存在雲端硬碟。' : '✂️ Planilha desvinculada! O histórico de dados permanece seguro no Google Drive.');
         }
 
         function openMockSheets() {
             if (unlinkedSheetsState) {
-                // 彈窗引導重新選取
-                const reLink = confirm("🔌 表單目前無連結，是否重新【選取現有的試算表】以接回歷史作答水管？");
+                const confirmMsg = currentLang === 'zh' ? 
+                    "🔌 表單目前無連結，是否重新【選取現有的試算表】以接回歷史作答水管？" :
+                    "🔌 O formulário está desconectado. Deseja [Selecionar Planilha Existente] para reconectar os tubos de dados?";
+                const reLink = confirm(confirmMsg);
                 if (reLink) {
-                    document.getElementById("sheets-status-badge").innerText = "已重新綁定 (表單回應 2)";
-                    document.getElementById("sheets-status-badge").className = "bg-emerald-100 text-emerald-800 text-xs px-2.5 py-0.5 rounded-full font-black inline-block";
-                    document.getElementById("sheets-title").innerText = "115 學年度家長聯絡簿調查 (Responses) [重新建立]";
+                    unlinkedSheetsState = false;
+                    
+                    document.getElementById("sheets-status-badge").innerText = currentLang === 'zh' ? '已重新綁定 (表單回應 2)' : 'Revinculado (Respostas ao formulário 2)';
+                    document.getElementById("sheets-status-badge").className = "bg-emerald-100 text-emerald-800 text-[10px] md:text-xs px-2.5 py-0.5 rounded-full font-black inline-block";
+                    document.getElementById("sheets-title").innerText = currentLang === 'zh' ? '115 學年度家長聯絡簿調查 (Responses) [重新建立]' : 'Pesquisa da Caderneta Escolar 115 (Respostas) [Restabelecido]';
                     
                     if (currentStep === 6) {
                         taskStatus[6] = true;
-                        showToast("💚 重新對接大復活！試算表自動產生 Responses 分頁重新同步！");
+                        showToast(currentLang === 'zh' ? '💚 重新對接大復活！試算表自動產生 Responses 分頁重新同步！' : '💚 Conexão de dados restaurada! Planilha gerou aba Responses síncrona com sucesso!');
                         updateProgressUI();
                     }
                 }
@@ -988,36 +1470,59 @@
         }
 
         // ========================================================
-        // 擬真頁籤切換提示 (Toast 教學)
+        // 擬真提示與 Toast 列 / Toast de Orientações e Toasts Gerais
         // ========================================================
         function clickFormTab(tab) {
             if (tab === 'questions') {
-                showToast("📝 目前為『問題編輯區』，此處提供視覺設計與各防呆題目的設定。");
+                showToast(currentLang === 'zh' ? '📝 目前為『問題編輯區』，此處提供視覺設計與各防呆題目的設定。' : '📝 Você está na "Área de Perguntas", onde configura o visual e as validações do formulário.');
             } else if (tab === 'responses') {
-                showToast("📊 進入『回覆統計區』！此處可以一鍵複製圖表，或點擊綠色按鈕開啟關聯的試算表。");
+                showToast(currentLang === 'zh' ? '📊 進入『回覆統計區』！此處可以一鍵複製圖表，或點擊綠色按鈕開啟關聯的試算表。' : '📊 Área de Respostas: Copie gráficos de dados com um clique ou acesse a Planilha conectada.');
                 toggleMockSheetsModal(true);
             } else if (tab === 'settings') {
-                showToast("⚙️ 進入『全域設定區』，此處提供『設為測驗』、成績手動公布、以及隨機題序的黃金分頁排雷喔。");
+                showToast(currentLang === 'zh' ? '⚙️ 進入『全域設定區』，此處提供『設為測驗』、成績手動公布、以及隨機題序的黃金分頁排雷喔。' : '⚙️ Área de Configurações: Defina exames, liberação manual de notas e ordenação aleatória.');
             }
         }
 
-        // ========================================================
-        // 擬真右側懸浮工具列 Toast
-        // ========================================================
+        function showPreviewToast() {
+            showToast(currentLang === 'zh' ? '👁️ 預覽：目前為『編輯者模式』，您隨時可切換各步驟體驗填答者的手機視野。' : '👁️ Visualização: Modo Editor Ativo. Conclua etapas para ver a perspectiva do celular dos pais.');
+        }
+
+        function showSettingsToast() {
+            showToast(currentLang === 'zh' ? '⚙️ 設定已同步儲存於雲端硬碟，無須手動存檔！' : '⚙️ Configurações salvas no Google Drive em tempo real. Não há necessidade de salvar manualmente!');
+        }
+
+        function showSendToast() {
+            showToast(currentLang === 'zh' ? '✈️ 發送：在 L1 考試中，『傳送』是用來獲取填答連結或發送 Email 的重要關卡。' : '✈️ Enviar: Etapa essencial no exame L1 para obter links de resposta ou enviar e-mails de preenchimento.');
+        }
+
+        function showCsvToast() {
+            showToast(currentLang === 'zh' ? 'ℹ️ 下載回應為 .csv 檔為獨立離線分析的最佳考科重點！' : 'ℹ️ Baixar respostas em formato .csv é crucial para análise e arquivamento offline.');
+        }
+
         function showToolbarToast(action) {
             const msgs = {
-                add: "➕ 新增問題：L1 考試最基本的基礎！",
-                import: "📄 匯入問題：行政省時神技，一鍵從舊表單撈取題目！",
-                text: "TT 新增標題：當啟動『隨機題序』時，可用文字說明輔助題組。",
-                image: "🖼️ 新增圖片：適合低年級看圖選字、理化電路看圖出題！",
-                video: "🎥 新增影片：直覺嵌入 YouTube，打造『看完影片立即作答』的翻轉教材！",
-                section: "🥞 新增區段：配合隨機題序的『黃金分頁法』，把姓名座號獨立防亂跑的關鍵！"
+                zh: {
+                    add: "➕ 新增問題：L1 考試最基本的基礎！",
+                    import: "📄 匯入問題：行政省時神技，一鍵從舊表單撈取題目！",
+                    text: "TT 新增標題：當啟動『隨機題序』時，可用文字說明輔助題組。",
+                    image: "🖼️ 新增圖片：適合低年級看圖選字、理化電路看圖出題！",
+                    video: "🎥 新增影片：直覺嵌入 YouTube，打造『看完影片立即作答』的翻轉教材！",
+                    section: "🥞 新增區段：配合隨機題序的『黃金分頁法』，把姓名座號獨立防亂跑的關鍵！"
+                },
+                pt: {
+                    add: "➕ Adicionar Pergunta: A base operacional mais importante da L1!",
+                    import: "📄 Importar Perguntas: Economia de tempo incrível! Puxe perguntas de outros formulários.",
+                    text: "TT Adicionar Título: Muito útil para agrupar e organizar instruções no formulário.",
+                    image: "🖼️ Adicionar Imagem: Ótimo para avaliações visuais ou gráficos explicativos.",
+                    video: "🎥 Adicionar Vídeo: Integre vídeos do YouTube para criar exercícios interativos.",
+                    section: "🥞 Adicionar Seção: O segredo para criar seções independentes e ordenar questões de forma inteligente!"
+                }
             };
-            showToast(msgs[action]);
+            showToast(msgs[currentLang][action]);
         }
 
         // ========================================================
-        // 🎆 HTML5 2D 物理粒子煙火特效引擎 (高度自動適應 resize)
+        // 🎆 HTML5 2D 物理粒子煙火特效引擎
         // ========================================================
         let fireworksActive = false;
         const canvas = document.getElementById("fireworks-canvas");
@@ -1085,21 +1590,18 @@
             requestAnimationFrame(animateFireworks);
         }
 
-        // ========================================================
-        // 慶祝大復活全通關
-        // ========================================================
+        // 啟動全通關慶祝 / Iniciar Celebração de Vitória
         function startVictoryCelebration() {
             resizeCanvas();
             canvas.classList.remove("hidden");
             fireworksActive = true;
             animateFireworks();
 
-            // 首發爆破
             createExplosion(canvas.width / 2, canvas.height / 3);
             createExplosion(canvas.width * 0.3, canvas.height / 2);
             createExplosion(canvas.width * 0.7, canvas.height / 2);
 
-            showToast("🎉 恭喜全部防雷挑戰成功！大匯流入口已開啟！");
+            showToast(currentLang === 'zh' ? "🎉 恭喜全部防雷挑戰成功！大匯流入口已開啟！" : "🎉 Parabéns! Desafio concluído com sucesso! Portal aberto!");
             setTimeout(() => {
                 toggleSurveyModal(true);
             }, 800);
@@ -1115,25 +1617,28 @@
         }
 
         // ========================================================
-        // 真實發送：研習問卷大匯流
+        // 真實發送：研習問卷大匯流 / Envio Real dos Dados para Planilha
         // ========================================================
         function submitRealSurvey(event) {
             event.preventDefault();
             const btn = document.getElementById("submit-survey-btn");
             btn.disabled = true;
-            btn.innerHTML = `<span>發送中... 請稍候</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
+            
+            if (currentLang === 'zh') {
+                btn.innerHTML = `<span>發送中... 請稍候</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
+            } else {
+                btn.innerHTML = `<span>Enviando... Aguarde</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
+            }
 
             const form = document.getElementById("real-survey-form");
             const formData = new FormData(form);
 
-            // 解析複選 Checkbox 的複數值
             const favoritesChecked = [];
             const checkBoxes = form.querySelectorAll('input[name="favorites"]:checked');
             checkBoxes.forEach(cb => {
                 favoritesChecked.push(cb.value);
             });
 
-            // 組裝 URL 參數字串
             const urlParams = new URLSearchParams();
             urlParams.append("name", formData.get("name"));
             urlParams.append("school", formData.get("school"));
@@ -1141,13 +1646,11 @@
             urlParams.append("most_challenging", formData.get("most_challenging"));
             urlParams.append("opinion", formData.get("opinion"));
             
-            // 寫入多個 favorites
             favoritesChecked.forEach(val => {
                 urlParams.append("favorites", val);
             });
 
-            // 雙軌運行：
-            // 軌道 A - 透過 no-cors 真實發送至您的 GAS Web App API 後台
+            // 雙軌發送 (mode: 'no-cors' 真實寫入 Google Sheets API 後台)
             fetch(WEB_APP_API, {
                 method: "POST",
                 mode: "no-cors",
@@ -1157,7 +1660,6 @@
                 body: urlParams.toString()
             })
             .then(() => {
-                // 軌道 B - 立即將數據實時滑入前端講師 Sheet 做現場驚奇展示
                 const now = new Date();
                 const timeStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
                 
@@ -1173,25 +1675,27 @@
                     <td class="p-2 md:p-3 border text-emerald-800">${formData.get("opinion")}</td>
                     <td class="p-2 md:p-3 border">${favoritesChecked.join(", ")}</td>
                 `;
-                tableBody.insertBefore(newRow, tableBody.firstChild); // 塞到最前面，凸顯動態滑入
+                tableBody.insertBefore(newRow, tableBody.firstChild);
 
-                alert("🎉 恭喜！資料已透過安全連線，1 秒寫入講師雲端後台！");
+                const alertMsg = currentLang === 'zh' ? 
+                    "🎉 恭喜！資料已透過安全連線，1 秒寫入講師雲端後台！" :
+                    "🎉 Parabéns! Dados enviados via conexão segura e inseridos na nuvem em 1 segundo!";
+                alert(alertMsg);
+                
                 toggleSurveyModal(false);
-                toggleMockSheetsModal(true); // 自動開啟試算表展示奇蹟
+                toggleMockSheetsModal(true); // 自動開啟數據試算表展示神奇的匯流
             })
             .catch(err => {
                 console.error("Submission error", err);
-                alert("發送失敗，請檢查網路。");
+                alert(currentLang === 'zh' ? "發送失敗，請檢查網路。" : "Falha no envio, por favor verifique sua conexão.");
             })
             .finally(() => {
                 btn.disabled = false;
-                btn.innerHTML = `<span>發送真實數據 ➔</span> <i class="fa-solid fa-paper-plane"></i>`;
+                btn.innerHTML = `<span>${langPack[currentLang].btn_submit_text}</span> <i class="fa-solid fa-paper-plane"></i>`;
             });
         }
 
-        // ========================================================
-        // 全局 Toast 提示元件
-        // ========================================================
+        // 全局 Toast 提示組件 / Função de Feedback Rápido Toast
         function showToast(msg) {
             const toast = document.getElementById("toast-notification");
             const text = document.getElementById("toast-text");

@@ -15,10 +15,9 @@
     <style>
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            /* 最佳化行動端點擊無延遲 / Otimização de clique sem atraso */
             touch-action: manipulation;
         }
-        /* 隱藏滾動條但保持功能 / Ocultar barra de rolagem mas manter função */
+        /* 隱藏滾動條但保持功能 */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
@@ -31,7 +30,6 @@
 <body class="h-full bg-slate-950 text-slate-100 flex flex-col overflow-hidden select-none">
 
     <!-- 頂部導航列 (投影清晰大字體 + 手機自適應 + 雙語切換) -->
-    <!-- Barra de Navegação Superior (Adaptável + Seletor de Idioma) -->
     <header class="bg-slate-900 border-b border-slate-800 px-4 md:px-8 py-4 md:py-5 flex items-center justify-between shrink-0 z-10 gap-3">
         <div class="flex items-center gap-3 md:gap-4">
             <div class="w-10 h-10 md:w-12 md:h-12 bg-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20 shrink-0">
@@ -117,7 +115,7 @@
                             <i class="fa-solid fa-circle-play"></i> 請依照引導操作：
                         </h3>
                         <div id="step-guide" class="text-sm md:text-lg text-slate-200 leading-relaxed space-y-2">
-                            <!-- 這裡將由 JS 動態載入雙語指示 / Carregado dinamicamente via JS -->
+                            <!-- 由 JS 動態載入雙語指示 -->
                         </div>
                     </div>
 
@@ -590,7 +588,7 @@
         <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-md p-6 space-y-6 shadow-2xl relative">
             <div class="flex items-start gap-4">
                 <div id="dialog-icon-container" class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0">
-                    <!-- Dynamically loaded icon -->
+                    <!-- 內部圖示由 JS 動態生成 -->
                 </div>
                 <div class="space-y-1 flex-1">
                     <h3 id="dialog-title" class="text-lg font-black text-white">對話框標題</h3>
@@ -598,7 +596,7 @@
                 </div>
             </div>
             <div class="flex items-center justify-end gap-3" id="dialog-actions">
-                <!-- Action buttons loaded dynamically -->
+                <!-- 按鈕列由 JS 動態生成 -->
             </div>
         </div>
     </div>
@@ -943,194 +941,211 @@
         function setLanguage(lang) {
             currentLang = lang;
             
-            // 更新切換按鈕狀態 / Atualizar estilo de botões seletores
+            // 更新切換按鈕狀態
             const zhBtn = document.getElementById("lang-zh-btn");
             const ptBtn = document.getElementById("lang-pt-btn");
-            if (lang === 'zh') {
-                zhBtn.className = "px-2.5 py-1.5 text-xs font-black rounded-lg transition-all bg-purple-600 text-white";
-                ptBtn.className = "px-2.5 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200";
-            } else {
-                ptBtn.className = "px-2.5 py-1.5 text-xs font-black rounded-lg transition-all bg-purple-600 text-white";
-                zhBtn.className = "px-2.5 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200";
+            if (zhBtn && ptBtn) {
+                if (lang === 'zh') {
+                    zhBtn.className = "px-2.5 py-1.5 text-xs font-black rounded-lg transition-all bg-purple-600 text-white";
+                    ptBtn.className = "px-2.5 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200";
+                } else {
+                    ptBtn.className = "px-2.5 py-1.5 text-xs font-black rounded-lg transition-all bg-purple-600 text-white";
+                    zhBtn.className = "px-2.5 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-400 hover:text-slate-200";
+                }
             }
 
-            // 逐一更新靜態與動態元素 / Atualizar textos estáticos e dinâmicos
             const pack = langPack[lang];
-            
-            document.getElementById("header-title").innerHTML = pack.header_title;
-            document.getElementById("header-subtitle").innerText = pack.header_subtitle;
-            document.getElementById("progress-label").innerText = pack.progress_label;
-            document.getElementById("step-pain-title").innerHTML = pack.step_pain_title;
-            document.getElementById("step-guide-title").innerHTML = pack.step_guide_title;
-            document.getElementById("tutor-title").innerHTML = pack.tutor_title;
-            document.getElementById("module-feedback-text").innerText = pack.module_feedback_text;
+            if (!pack) return;
 
-            // Forms 頂部與按鈕 Title / Tooltips de ferramentas
-            document.getElementById("form-file-title").innerText = pack.form_file_title;
-            document.getElementById("questions-tab-btn").innerText = pack.tab_questions;
-            document.getElementById("responses-tab-btn").innerText = pack.tab_responses;
-            document.getElementById("settings-tab-btn").innerText = pack.tab_settings;
-            document.getElementById("send-btn").innerText = lang === 'zh' ? '傳送' : 'Enviar';
+            // 使用防禦性 try-catch 包裹所有 DOM 更新，防止任何單一 ID 缺失導致整體語系切換中斷
+            try {
+                if (document.getElementById("header-title")) document.getElementById("header-title").innerHTML = pack.header_title;
+                if (document.getElementById("header-subtitle")) document.getElementById("header-subtitle").innerText = pack.header_subtitle;
+                if (document.getElementById("progress-label")) document.getElementById("progress-label").innerText = pack.progress_label;
+                if (document.getElementById("step-pain-title")) document.getElementById("step-pain-title").innerHTML = pack.step_pain_title;
+                if (document.getElementById("step-guide-title")) document.getElementById("step-guide-title").innerHTML = pack.step_guide_title;
+                if (document.getElementById("tutor-title")) document.getElementById("tutor-title").innerHTML = pack.tutor_title;
+                if (document.getElementById("module-feedback-text")) document.getElementById("module-feedback-text").innerText = pack.module_feedback_text;
 
-            document.getElementById("palette-btn").title = lang === 'zh' ? '自訂主題' : 'Personalizar Tema';
-            document.getElementById("preview-btn").title = lang === 'zh' ? '預覽' : 'Visualização';
-            if (document.getElementById("settings-btn")) {
-                document.getElementById("settings-btn").title = lang === 'zh' ? '設定' : 'Configurações';
+                // Forms 頂部與按鈕 Title
+                if (document.getElementById("form-file-title")) document.getElementById("form-file-title").innerText = pack.form_file_title;
+                if (document.getElementById("questions-tab-btn")) document.getElementById("questions-tab-btn").innerText = pack.tab_questions;
+                if (document.getElementById("responses-tab-btn")) document.getElementById("responses-tab-btn").innerText = pack.tab_responses;
+                if (document.getElementById("settings-tab-btn")) document.getElementById("settings-tab-btn").innerText = pack.tab_settings;
+                if (document.getElementById("send-btn")) document.getElementById("send-btn").innerText = lang === 'zh' ? '傳送' : 'Enviar';
+
+                if (document.getElementById("palette-btn")) document.getElementById("palette-btn").title = lang === 'zh' ? '自訂主題' : 'Personalizar Tema';
+                if (document.getElementById("preview-btn")) document.getElementById("preview-btn").title = lang === 'zh' ? '預覽' : 'Visualização';
+                if (document.getElementById("settings-btn")) document.getElementById("settings-btn").title = lang === 'zh' ? '設定' : 'Configurações';
+
+                const mobileToggleText = document.getElementById("mobile-toggle-btn-text");
+                if (mobileToggleText) {
+                    mobileToggleText.innerHTML = isMobileGuideCollapsed ? pack.mobile_toggle_expand : pack.mobile_toggle_collapse;
+                }
+
+                // 工具列提示
+                if (document.getElementById("tool-add")) document.getElementById("tool-add").title = lang === 'zh' ? '新增問題' : 'Adicionar pergunta';
+                if (document.getElementById("tool-import")) document.getElementById("tool-import").title = lang === 'zh' ? '匯入問題' : 'Importar perguntas';
+                if (document.getElementById("tool-text")) document.getElementById("tool-text").title = lang === 'zh' ? '新增標題與說明' : 'Adicionar título e descrição';
+                if (document.getElementById("tool-image")) document.getElementById("tool-image").title = lang === 'zh' ? '新增圖片' : 'Adicionar imagem';
+                if (document.getElementById("tool-video")) document.getElementById("tool-video").title = lang === 'zh' ? '新增影片' : 'Adicionar vídeo';
+                if (document.getElementById("tool-section")) document.getElementById("tool-section").title = lang === 'zh' ? '新增區段' : 'Adicionar seção';
+
+                // 主題自訂面板 (關卡一) - 核心修正對齊
+                if (document.getElementById("palette-panel-title")) document.getElementById("palette-panel-title").innerHTML = pack.palette_panel_title;
+                if (document.getElementById("choose-banner-label")) document.getElementById("choose-banner-label").innerText = pack.choose_banner_label;
+                if (document.getElementById("opt-classic")) document.getElementById("opt-classic").innerText = pack.opt_classic;
+                if (document.getElementById("opt-pencils")) document.getElementById("opt-pencils").innerText = pack.opt_pencils;
+                
+                if (document.getElementById("banner-text")) {
+                    if (!taskStatus[1]) {
+                        document.getElementById("banner-text").innerText = pack.banner_text;
+                    } else {
+                        document.getElementById("banner-text").innerText = lang === 'zh' ? '🌈 彩色鉛筆校園網' : '🌈 Rede de Cabeçalho de Lápis';
+                    }
+                }
+
+                // 編輯器主卡片
+                if (document.getElementById("editor-title-val")) document.getElementById("editor-title-val").value = pack.editor_title_val;
+                if (document.getElementById("editor-desc-val")) document.getElementById("editor-desc-val").value = pack.editor_desc_val;
+
+                // 關卡二手機題卡
+                if (document.getElementById("q-phone-badge")) document.getElementById("q-phone-badge").innerText = pack.q_phone_badge;
+                if (document.getElementById("q-phone-title")) document.getElementById("q-phone-title").value = pack.q_phone_title;
+                if (document.getElementById("q-phone-type")) document.getElementById("q-phone-type").innerHTML = pack.q_phone_type;
+                if (document.getElementById("q-phone-val-title")) document.getElementById("q-phone-val-title").innerHTML = pack.q_phone_val_title;
+                if (document.getElementById("q-phone-status")) document.getElementById("q-phone-status").innerText = pack.q_phone_status;
+                if (document.getElementById("label-val-type")) document.getElementById("label-val-type").innerText = pack.label_val_type;
+                if (document.getElementById("val-type-num")) document.getElementById("val-type-num").innerText = pack.val_type_num;
+                if (document.getElementById("label-val-rule")) document.getElementById("label-val-rule").innerText = pack.label_val_rule;
+                if (document.getElementById("val-rule-len")) document.getElementById("val-rule-len").innerText = pack.val_rule_len;
+                if (document.getElementById("label-val-limit")) document.getElementById("label-val-limit").innerText = pack.label_val_limit;
+                if (document.getElementById("q-phone-label")) document.getElementById("q-phone-label").innerText = pack.q_phone_label;
+                if (document.getElementById("phone-input")) document.getElementById("phone-input").placeholder = pack.phone_input_placeholder;
+
+                // 關卡三網域限制
+                if (document.getElementById("q-domain-badge")) document.getElementById("q-domain-badge").innerText = pack.q_domain_badge;
+                if (document.getElementById("q-domain-title")) document.getElementById("q-domain-title").innerText = pack.q_domain_title;
+                if (document.getElementById("q-domain-backend-title")) document.getElementById("q-domain-backend-title").innerHTML = pack.q_domain_backend_title;
+                if (document.getElementById("q-domain-checkbox-text")) document.getElementById("q-domain-checkbox-text").innerText = pack.q_domain_checkbox_text;
+                if (document.getElementById("q-domain-checkbox-sub")) document.getElementById("q-domain-checkbox-sub").innerText = pack.q_domain_checkbox_sub;
+                
+                const domainCb = document.getElementById("domain-lock-cb");
+                if (domainCb) {
+                    if (domainCb.checked) {
+                        if (document.getElementById("phone-lock-title")) document.getElementById("phone-lock-title").innerText = pack.phone_lock_title;
+                        if (document.getElementById("phone-lock-desc")) document.getElementById("phone-lock-desc").innerText = pack.phone_lock_desc;
+                    } else {
+                        if (document.getElementById("phone-lock-title")) document.getElementById("phone-lock-title").innerText = pack.phone_unlock_title;
+                        if (document.getElementById("phone-lock-desc")) document.getElementById("phone-lock-desc").innerText = pack.phone_unlock_desc;
+                    }
+                }
+
+                // 關卡四智慧分流
+                if (document.getElementById("q-branch-badge")) document.getElementById("q-branch-badge").innerText = pack.q_branch_badge;
+                if (document.getElementById("q-branch-title")) document.getElementById("q-branch-title").innerText = pack.q_branch_title;
+                if (document.getElementById("q-branch-setting-title")) document.getElementById("q-branch-setting-title").innerHTML = pack.q_branch_setting_title;
+                if (document.getElementById("q-branch-choice-a")) document.getElementById("q-branch-choice-a").innerText = pack.q_branch_choice_a;
+                if (document.getElementById("q-branch-choice-b")) document.getElementById("q-branch-choice-b").innerText = pack.q_branch_choice_b;
+                if (document.getElementById("branch-test-desc")) document.getElementById("branch-test-desc").innerText = pack.branch_test_desc;
+                if (document.getElementById("btn-sim-a")) document.getElementById("btn-sim-a").innerText = pack.btn_sim_a;
+                if (document.getElementById("btn-sim-b")) document.getElementById("btn-sim-b").innerText = pack.btn_sim_b;
+                
+                const rA = document.getElementById("route-a");
+                const rB = document.getElementById("route-b");
+                if (rA && rB) {
+                    rA.options[0].text = lang === 'zh' ? '繼續前往下一個區段' : 'Continuar para a próxima seção';
+                    rA.options[1].text = lang === 'zh' ? '前往區段 2 (午餐調查)' : 'Ir para a seção 2 (Pesquisa de Almoço)';
+                    rA.options[2].text = lang === 'zh' ? '前往區段 3 (意見委託)' : 'Ir para a seção 3 (Delegação de Opiniões)';
+                    
+                    rB.options[0].text = lang === 'zh' ? '繼續前往下一個區段' : 'Continuar para a próxima seção';
+                    rB.options[1].text = lang === 'zh' ? '前往區段 2 (午餐調查)' : 'Ir para a seção 2 (Pesquisa de Almoço)';
+                    rB.options[2].text = lang === 'zh' ? '前往區段 3 (意見委託)' : 'Ir para a seção 3 (Delegação de Opiniões)';
+                }
+
+                // 關卡五定量自動截止
+                if (document.getElementById("q-limit-badge")) document.getElementById("q-limit-badge").innerText = pack.q_limit_badge;
+                if (document.getElementById("q-limit-title")) document.getElementById("q-limit-title").innerText = pack.q_limit_title;
+                if (document.getElementById("q-limit-rule-title")) document.getElementById("q-limit-rule-title").innerHTML = pack.q_limit_rule_title;
+                if (document.getElementById("q-limit-cond-label")) document.getElementById("q-limit-cond-label").innerText = pack.q_limit_cond_label;
+                if (document.getElementById("q-limit-cond-val")) document.getElementById("q-limit-cond-val").innerText = pack.q_limit_cond_val;
+                if (document.getElementById("q-limit-max-label")) document.getElementById("q-limit-max-label").innerText = pack.q_limit_max_label;
+                if (document.getElementById("limit-num")) document.getElementById("limit-num").placeholder = pack.limit_num_placeholder;
+                if (document.getElementById("q-limit-msg-label")) document.getElementById("q-limit-msg-label").innerText = pack.q_limit_msg_label;
+                if (document.getElementById("limit-msg")) document.getElementById("limit-msg").placeholder = pack.limit_msg_placeholder;
+                if (document.getElementById("q-limit-save-btn")) document.getElementById("q-limit-save-btn").innerText = pack.q_limit_save_btn;
+
+                // 關卡六試算表連結
+                if (document.getElementById("q-sheets-badge")) document.getElementById("q-sheets-badge").innerText = pack.q_sheets_badge;
+                if (document.getElementById("q-sheets-title")) document.getElementById("q-sheets-title").innerText = pack.q_sheets_title;
+                
+                if (document.getElementById("sheets-status-badge")) {
+                    if (unlinkedSheetsState) {
+                        document.getElementById("sheets-status-badge").innerText = pack.sheets_status_unlinked;
+                        document.getElementById("sheets-status-badge").className = "bg-rose-100 text-rose-800 text-xs px-2.5 py-0.5 rounded-full font-black inline-block";
+                    } else {
+                        document.getElementById("sheets-status-badge").innerText = pack.sheets_status_badge;
+                        document.getElementById("sheets-status-badge").className = "bg-emerald-100 text-emerald-800 text-[10px] md:text-xs px-2 py-0.5 rounded-full font-black inline-block";
+                    }
+                }
+                if (document.getElementById("sheets-title")) {
+                    if (unlinkedSheetsState) {
+                        document.getElementById("sheets-title").innerText = pack.sheets_title_unlinked;
+                    } else {
+                        document.getElementById("sheets-title").innerText = pack.sheets_title;
+                    }
+                }
+                
+                if (document.getElementById("unlink-sheets-btn")) document.getElementById("unlink-sheets-btn").innerHTML = pack.unlink_sheets_btn;
+                if (document.getElementById("download-csv-btn")) document.getElementById("download-csv-btn").innerHTML = pack.download_csv_btn;
+                if (document.getElementById("open-sheet-btn")) document.getElementById("open-sheet-btn").innerText = pack.open_sheet_btn;
+
+                // 講師後台
+                if (document.getElementById("modal-sheets-title")) document.getElementById("modal-sheets-title").innerText = pack.modal_sheets_title;
+                if (document.getElementById("th-time")) document.getElementById("th-time").innerText = pack.th_time;
+                if (document.getElementById("th-name")) document.getElementById("th-name").innerText = pack.th_name;
+                if (document.getElementById("th-school")) document.getElementById("th-school").innerText = pack.th_school;
+                if (document.getElementById("th-tool-rew")) document.getElementById("th-tool-rew").innerText = pack.th_tool_rew;
+                if (document.getElementById("th-tool-cha")) document.getElementById("th-tool-cha").innerText = pack.th_tool_cha;
+                if (document.getElementById("th-opinion")) document.getElementById("th-opinion").innerText = pack.th_opinion;
+                if (document.getElementById("th-favs")) document.getElementById("th-favs").innerText = pack.th_favs;
+                if (document.getElementById("mock-row-feedback")) document.getElementById("mock-row-feedback").innerText = pack.mock_row_feedback;
+                if (document.getElementById("mock-row-favs")) document.getElementById("mock-row-favs").innerText = pack.mock_row_favs;
+
+                // 全通關回顧 Popup
+                if (document.getElementById("survey-title")) document.getElementById("survey-title").innerText = pack.survey_title;
+                if (document.getElementById("survey-desc")) document.getElementById("survey-desc").innerText = pack.survey_desc;
+                if (document.getElementById("survey-label-name")) document.getElementById("survey-label-name").innerText = pack.survey_label_name;
+                if (document.getElementById("real-survey-form")) {
+                    document.getElementById("real-survey-form").name.placeholder = pack.survey_placeholder_name;
+                    document.getElementById("real-survey-form").school.placeholder = pack.survey_placeholder_school;
+                    document.getElementById("real-survey-form").opinion.placeholder = pack.survey_placeholder_opinion;
+                }
+                if (document.getElementById("survey-label-school")) document.getElementById("survey-label-school").innerText = pack.survey_label_school;
+                if (document.getElementById("survey-label-tool-rew")) document.getElementById("survey-label-tool-rew").innerText = pack.survey_label_tool_rew;
+                if (document.getElementById("survey-label-tool-cha")) document.getElementById("survey-label-tool-cha").innerText = pack.survey_label_tool_cha;
+                if (document.getElementById("survey-label-favs")) document.getElementById("survey-label-favs").innerText = pack.survey_label_favs;
+                if (document.getElementById("survey-label-opinion")) document.getElementById("survey-label-opinion").innerText = pack.survey_label_opinion;
+                if (document.getElementById("btn-submit-text")) document.getElementById("btn-submit-text").innerText = pack.btn_submit_text;
+                if (document.getElementById("survey-disclaimer")) document.getElementById("survey-disclaimer").innerText = pack.survey_disclaimer;
+
+                // 複選選項 Checkboxes
+                if (document.getElementById("chk-opt-1")) document.getElementById("chk-opt-1").innerText = pack.chk_opt_1;
+                if (document.getElementById("chk-opt-2")) document.getElementById("chk-opt-2").innerText = pack.chk_opt_2;
+                if (document.getElementById("chk-opt-3")) document.getElementById("chk-opt-3").innerText = pack.chk_opt_3;
+                if (document.getElementById("chk-opt-4")) document.getElementById("chk-opt-4").innerText = pack.chk_opt_4;
+                if (document.getElementById("chk-opt-5")) document.getElementById("chk-opt-5").innerText = pack.chk_opt_5;
+                if (document.getElementById("chk-opt-6")) document.getElementById("chk-opt-6").innerText = pack.chk_opt_6;
+
+            } catch (err) {
+                console.warn("Dicionário de Tradução: Algum ID de elemento não foi encontrado, mas a execução continua de forma segura.", err);
             }
 
-            // 更新行動端摺疊按鈕 / Atualizar botão mobile
-            const mobileToggleText = document.getElementById("mobile-toggle-btn-text");
-            if (mobileToggleText) {
-                mobileToggleText.innerHTML = isMobileGuideCollapsed ? pack.mobile_toggle_expand : pack.mobile_toggle_collapse;
-            }
-
-            // 工具列提示 / Tooltips de ferramentas
-            document.getElementById("tool-add").title = lang === 'zh' ? '新增問題' : 'Adicionar pergunta';
-            document.getElementById("tool-import").title = lang === 'zh' ? '匯入問題' : 'Importar perguntas';
-            document.getElementById("tool-text").title = lang === 'zh' ? '新增標題與說明' : 'Adicionar título e descrição';
-            document.getElementById("tool-image").title = lang === 'zh' ? '新增圖片' : 'Adicionar imagem';
-            document.getElementById("tool-video").title = lang === 'zh' ? '新增影片' : 'Adicionar vídeo';
-            document.getElementById("tool-section").title = lang === 'zh' ? '新增區段' : 'Adicionar seção';
-
-            // 主題設定選單 / Painel de Tema
-            document.getElementById("palette-panel-title").innerHTML = pack.palette_panel_title;
-            document.getElementById("choose-banner-label").innerText = pack.choose_banner_label;
-            document.getElementById("opt-classic").innerText = pack.opt_classic;
-            document.getElementById("opt-pencils").innerText = pack.opt_pencils;
-            
-            // 根據是否已通關第一步來載入 Banner / Carregar banner conforme progresso
-            if (!taskStatus[1]) {
-                document.getElementById("banner-text").innerText = pack.banner_text;
-            } else {
-                document.getElementById("banner-text").innerText = lang === 'zh' ? '🌈 彩色鉛筆校園網' : '🌈 Rede de Cabeçalho de Lápis';
-            }
-
-            // 編輯器主卡片 / Cards do Editor
-            document.getElementById("editor-title-val").value = pack.editor_title_val;
-            document.getElementById("editor-desc-val").value = pack.editor_desc_val;
-
-            // 關卡 02 手機題卡 / Etapa 02 - Card de Celular
-            document.getElementById("q-phone-badge").innerText = pack.q_phone_badge;
-            document.getElementById("q-phone-title").value = pack.q_phone_title;
-            document.getElementById("q-phone-type").innerHTML = pack.q_phone_type;
-            document.getElementById("q-phone-val-title").innerHTML = pack.q_phone_val_title;
-            document.getElementById("q-phone-status").innerText = pack.q_phone_status;
-            document.getElementById("label-val-type").innerText = pack.label_val_type;
-            document.getElementById("val-type-num").innerText = pack.val_type_num;
-            document.getElementById("label-val-rule").innerText = pack.label_val_rule;
-            document.getElementById("val-rule-len").innerText = pack.val_rule_len;
-            document.getElementById("label-val-limit").innerText = pack.label_val_limit;
-            document.getElementById("q-phone-label").innerText = pack.q_phone_label;
-            document.getElementById("phone-input").placeholder = pack.phone_input_placeholder;
-
-            // 關卡 03 網域限制卡 / Etapa 03 - Domínio
-            document.getElementById("q-domain-badge").innerText = pack.q_domain_badge;
-            document.getElementById("q-domain-title").innerText = pack.q_domain_title;
-            document.getElementById("q-domain-backend-title").innerHTML = pack.q_domain_backend_title;
-            document.getElementById("q-domain-checkbox-text").innerText = pack.q_domain_checkbox_text;
-            document.getElementById("q-domain-checkbox-sub").innerText = pack.q_domain_checkbox_sub;
-            
-            const domainCb = document.getElementById("domain-lock-cb");
-            if (domainCb.checked) {
-                document.getElementById("phone-lock-title").innerText = pack.phone_lock_title;
-                document.getElementById("phone-lock-desc").innerText = pack.phone_lock_desc;
-            } else {
-                document.getElementById("phone-lock-title").innerText = pack.phone_unlock_title;
-                document.getElementById("phone-lock-desc").innerText = pack.phone_unlock_desc;
-            }
-
-            // 關卡 04 智慧分流卡 / Etapa 04 - Ramificação
-            document.getElementById("q-branch-badge").innerText = pack.q_branch_badge;
-            document.getElementById("q-branch-title").innerText = pack.q_branch_title;
-            document.getElementById("q-branch-setting-title").innerHTML = pack.q_branch_setting_title;
-            document.getElementById("q-branch-choice-a").innerText = pack.q_branch_choice_a;
-            document.getElementById("q-branch-choice-b").innerText = pack.q_branch_choice_b;
-            document.getElementById("branch-test-desc").innerText = pack.branch_test_desc;
-            document.getElementById("btn-sim-a").innerText = pack.btn_sim_a;
-            document.getElementById("btn-sim-b").innerText = pack.btn_sim_b;
-            
-            // 下拉選項更新 / Atualizar opções de seleção
-            const rA = document.getElementById("route-a");
-            const rB = document.getElementById("route-b");
-            
-            rA.options[0].text = lang === 'zh' ? '繼續前往下一個區段' : 'Continuar para a próxima seção';
-            rA.options[1].text = lang === 'zh' ? '前往區段 2 (午餐調查)' : 'Ir para a seção 2 (Pesquisa de Almoço)';
-            rA.options[2].text = lang === 'zh' ? '前往區段 3 (意見委託)' : 'Ir para a seção 3 (Delegação de Opiniões)';
-            
-            rB.options[0].text = lang === 'zh' ? '繼續前往下一個區段' : 'Continuar para a próxima seção';
-            rB.options[1].text = lang === 'zh' ? '前往區段 2 (午餐調查)' : 'Ir para a seção 2 (Pesquisa de Almoço)';
-            rB.options[2].text = lang === 'zh' ? '前往區段 3 (意見委託)' : 'Ir para a seção 3 (Delegação de Opiniões)';
-
-            // 關卡 05 定量截止卡 / Etapa 05 - Limite
-            document.getElementById("q-limit-badge").innerText = pack.q_limit_badge;
-            document.getElementById("q-limit-title").innerText = pack.q_limit_title;
-            document.getElementById("q-limit-rule-title").innerHTML = pack.q_limit_rule_title;
-            document.getElementById("q-limit-cond-label").innerText = pack.q_limit_cond_label;
-            document.getElementById("q-limit-cond-val").innerText = pack.q_limit_cond_val;
-            document.getElementById("q-limit-max-label").innerText = pack.q_limit_max_label;
-            document.getElementById("limit-num").placeholder = pack.limit_num_placeholder;
-            document.getElementById("q-limit-msg-label").innerText = pack.q_limit_msg_label;
-            document.getElementById("limit-msg").placeholder = pack.limit_msg_placeholder;
-            document.getElementById("q-limit-save-btn").innerText = pack.q_limit_save_btn;
-
-            // 關卡 06 Sheets 連結 / Etapa 06 - Planilha
-            document.getElementById("q-sheets-badge").innerText = pack.q_sheets_badge;
-            document.getElementById("q-sheets-title").innerText = pack.q_sheets_title;
-            
-            if (unlinkedSheetsState) {
-                document.getElementById("sheets-status-badge").innerText = pack.sheets_status_unlinked;
-                document.getElementById("sheets-status-badge").className = "bg-rose-100 text-rose-800 text-xs px-2.5 py-0.5 rounded-full font-black inline-block";
-                document.getElementById("sheets-title").innerText = pack.sheets_title_unlinked;
-            } else {
-                document.getElementById("sheets-status-badge").innerText = pack.sheets_status_badge;
-                document.getElementById("sheets-status-badge").className = "bg-emerald-100 text-emerald-800 text-[10px] md:text-xs px-2 py-0.5 rounded-full font-black inline-block";
-                document.getElementById("sheets-title").innerText = pack.sheets_title;
-            }
-            
-            document.getElementById("unlink-sheets-btn").innerHTML = pack.unlink_sheets_btn;
-            document.getElementById("download-csv-btn").innerHTML = pack.download_csv_btn;
-            document.getElementById("open-sheet-btn").innerText = pack.open_sheet_btn;
-
-            // 數據網格 Modal / Tabela de Planilha do Instrutor
-            document.getElementById("modal-sheets-title").innerText = pack.modal_sheets_title;
-            document.getElementById("th-time").innerText = pack.th_time;
-            document.getElementById("th-name").innerText = pack.th_name;
-            document.getElementById("th-school").innerText = pack.th_school;
-            document.getElementById("th-tool-rew").innerText = pack.th_tool_rew;
-            document.getElementById("th-tool-cha").innerText = pack.th_tool_cha;
-            document.getElementById("th-opinion").innerText = pack.th_opinion;
-            document.getElementById("th-favs").innerText = pack.th_favs;
-            document.getElementById("mock-row-feedback").innerText = pack.mock_row_feedback;
-            document.getElementById("mock-row-favs").innerText = pack.mock_row_favs;
-
-            // 大問卷全通關 Popup / Modal Final de Conclusão
-            document.getElementById("survey-title").innerText = pack.survey_title;
-            document.getElementById("survey-desc").innerText = pack.survey_desc;
-            document.getElementById("survey-label-name").innerText = pack.survey_label_name;
-            document.getElementById("real-survey-form").name.placeholder = pack.survey_placeholder_name;
-            document.getElementById("survey-label-school").innerText = pack.survey_label_school;
-            document.getElementById("real-survey-form").school.placeholder = pack.survey_placeholder_school;
-            document.getElementById("survey-label-tool-rew").innerText = pack.survey_label_tool_rew;
-            document.getElementById("survey-label-tool-cha").innerText = pack.survey_label_tool_cha;
-            document.getElementById("survey-label-favs").innerText = pack.survey_label_favs;
-            document.getElementById("survey-label-opinion").innerText = pack.survey_label_opinion;
-            document.getElementById("real-survey-form").opinion.placeholder = pack.survey_placeholder_opinion;
-            document.getElementById("btn-submit-text").innerText = pack.btn_submit_text;
-            document.getElementById("survey-disclaimer").innerText = pack.survey_disclaimer;
-
-            // 選項 Checkboxes
-            document.getElementById("chk-opt-1").innerText = pack.chk_opt_1;
-            document.getElementById("chk-opt-2").innerText = pack.chk_opt_2;
-            document.getElementById("chk-opt-3").innerText = pack.chk_opt_3;
-            document.getElementById("chk-opt-4").innerText = pack.chk_opt_4;
-            document.getElementById("chk-opt-5").innerText = pack.chk_opt_5;
-            document.getElementById("chk-opt-6").innerText = pack.chk_opt_6;
-
-            // 重新刷新當前活動關卡 / Sincronizar dados dinâmicos da etapa ativa
+            // 同步刷新活動關卡
             switchStep(currentStep);
         }
 
-        // 🌟 自訂對話框機制 (代替 alert 與 confirm) / Custom Dialog System (Replaces Native Popups)
+        // 🌟 自訂對話框機制 (代替 alert 與 confirm)
         function showCustomDialog({ title, desc, icon, type, onConfirm, onCancel }) {
             const modal = document.getElementById("custom-dialog-modal");
             const dTitle = document.getElementById("dialog-title");
@@ -1138,10 +1153,11 @@
             const dIconContainer = document.getElementById("dialog-icon-container");
             const dActions = document.getElementById("dialog-actions");
 
+            if (!modal || !dTitle || !dDesc || !dIconContainer || !dActions) return;
+
             dTitle.innerText = title;
             dDesc.innerText = desc;
 
-            // 設定圖示 / Icon styles
             dIconContainer.className = `w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${icon}`;
             let iconHtml = "";
             if (icon.includes("emerald")) {
@@ -1153,7 +1169,6 @@
             }
             dIconContainer.innerHTML = iconHtml;
 
-            // 清空並重新渲染按鈕 / Reset buttons
             dActions.innerHTML = "";
 
             const pack = langPack[currentLang];
@@ -1178,7 +1193,6 @@
                 dActions.appendChild(cancelBtn);
                 dActions.appendChild(confirmBtn);
             } else {
-                // Alert type
                 const okBtn = document.createElement("button");
                 okBtn.className = "bg-purple-600 hover:bg-purple-700 text-white font-black px-6 py-2 rounded-xl text-sm transition-all shadow-md";
                 okBtn.innerText = pack.dialog_btn_ok;
@@ -1192,154 +1206,22 @@
             modal.classList.remove("hidden");
         }
 
-        // 行動端收合控制 / Toggle para Mobile
-        function toggleMobileGuide() {
-            const content = document.getElementById("collapsible-guide-content");
-            const btn = document.getElementById("mobile-toggle-btn");
-            isMobileGuideCollapsed = !isMobileGuideCollapsed;
-            
-            const btnSpan = btn.querySelector("span");
-            if (isMobileGuideCollapsed) {
-                content.classList.add("hidden");
-                btnSpan.innerHTML = langPack[currentLang].mobile_toggle_expand;
-                btn.classList.remove("text-purple-400");
-                btn.classList.add("text-slate-300", "bg-slate-800/80");
-            } else {
-                content.classList.remove("hidden");
-                btnSpan.innerHTML = langPack[currentLang].mobile_toggle_collapse;
-                btn.classList.remove("text-slate-300", "bg-slate-800/80");
-                btn.classList.add("text-purple-400");
-            }
-        }
-
-        // 關卡切換狀態管理 / Gerenciamento das Etapas do Simulador
-        function switchStep(stepNum) {
-            currentStep = stepNum;
-            
-            // 行動端預設展開 / Abrir painel no mobile ao trocar de etapa
-            if (isMobileGuideCollapsed) {
-                toggleMobileGuide();
-            }
-
-            // 更新頁籤樣式 / Atualizar estilo visual das abas de controle
-            for (let i = 1; i <= 6; i++) {
-                const btn = document.getElementById(`tab-${i}`);
-                if (i === stepNum) {
-                    btn.className = "py-3 md:py-4 text-purple-400 border-b-4 border-purple-500 bg-slate-800/30 font-black transition-all";
-                } else {
-                    btn.className = "py-3 md:py-4 text-slate-500 hover:text-slate-300 transition-all font-bold";
-                }
-            }
-
-            // 載入當前語言包關卡數據 / Carregar dados da etapa ativa com base no idioma
-            const data = stepDetails[currentLang][stepNum];
-            document.getElementById("step-badge").innerText = data.badge;
-            document.getElementById("step-title").innerText = data.title;
-            document.getElementById("step-pain").innerText = data.pain;
-            document.getElementById("step-guide").innerHTML = data.guide;
-            
-            // 溫馨提示展示 / Dicas do Instrutor
-            const tBox = document.getElementById("tutor-box");
-            if (data.tutor) {
-                document.getElementById("tutor-text").innerText = data.tutor;
-                tBox.classList.remove("hidden");
-            } else {
-                tBox.classList.add("hidden");
-            }
-
-            // 控制右側對應題卡的可視度 / Gerenciar visibilidade dos cards correspondentes
-            document.getElementById("q-phone-card").classList.toggle("hidden", stepNum !== 2);
-            document.getElementById("q-restrict-card").classList.toggle("hidden", stepNum !== 3);
-            document.getElementById("q-branch-card").classList.toggle("hidden", stepNum !== 4);
-            document.getElementById("q-limit-card").classList.toggle("hidden", stepNum !== 5);
-            document.getElementById("q-sheets-card").classList.toggle("hidden", stepNum !== 6);
-
-            updateProgressUI();
-        }
-
-        // 更新進度與按鈕狀態 / 更新進度與按鈕狀態 / Atualizar Barra de Progresso e Botões
-        function updateProgressUI() {
-            const percent = (currentStep / 6) * 100;
-            document.getElementById("progress-bar").style.width = `${percent}%`;
-            document.getElementById("progress-text").innerText = `${currentStep} / 6`;
-
-            // 動態打勾 ✓ / Adicionar sinal de verificação de conclusão
-            for (let i = 1; i <= 6; i++) {
-                const checkBadge = document.getElementById(`check-${i}`);
-                if (taskStatus[i]) {
-                    checkBadge.classList.remove("hidden");
-                } else {
-                    checkBadge.classList.add("hidden");
-                }
-            }
-
-            const nextBtn = document.getElementById("next-btn");
-            const btnText = document.getElementById("next-btn-text");
-            const btnIcon = document.getElementById("next-btn-icon");
-            const feedback = document.getElementById("module-feedback");
-
-            // 檢查是否全關卡通關 / Verificar se tudo foi concluído
-            const allCleared = Object.values(taskStatus).every(val => val === true);
-
-            if (allCleared) {
-                feedback.classList.remove("hidden");
-                nextBtn.disabled = false;
-                nextBtn.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 md:py-5 rounded-2xl transition-all flex items-center justify-center gap-2 md:gap-3 text-base md:text-xl shadow-lg shadow-emerald-500/20 animate-bounce cursor-pointer";
-                btnText.innerText = langPack[currentLang].next_btn_all_clear;
-                btnIcon.className = "fa-solid fa-trophy";
-                return;
-            }
-
-            const currentCleared = taskStatus[currentStep];
-
-            if (currentCleared) {
-                feedback.classList.remove("hidden");
-                nextBtn.disabled = false;
-                nextBtn.className = "w-full bg-purple-600 hover:bg-purple-700 text-white font-black py-4 md:py-5 rounded-2xl transition-all flex items-center justify-center gap-2 md:gap-3 text-base md:text-xl shadow-lg shadow-purple-500/10 cursor-pointer";
-                
-                if (currentStep < 6) {
-                    btnText.innerText = `${langPack[currentLang].next_btn_unlock}0${currentStep + 1} ➔`;
-                } else {
-                    btnText.innerText = currentLang === 'zh' ? '請完成未通關的其他關卡' : 'Complete as etapas restantes';
-                }
-                btnIcon.className = "fa-solid fa-arrow-right";
-            } else {
-                feedback.classList.add("hidden");
-                nextBtn.disabled = true;
-                nextBtn.className = "w-full bg-slate-800 text-slate-500 font-black py-4 md:py-5 rounded-2xl transition-all flex items-center justify-center gap-2 md:gap-3 text-base md:text-xl shadow-lg disabled:cursor-not-allowed";
-                btnText.innerText = langPack[currentLang].next_btn_lock;
-                btnIcon.className = "fa-solid fa-lock";
-            }
-        }
-
-        // 下一步操作 / Ir para Próxima Ação
-        function handleNextAction() {
-            const allCleared = Object.values(taskStatus).every(val => val === true);
-            if (allCleared) {
-                startVictoryCelebration();
-                return;
-            }
-
-            if (taskStatus[currentStep] && currentStep < 6) {
-                switchStep(currentStep + 1);
-            }
-        }
-
-        // ========================================================
-        // 關卡 01：自訂主題控制 / Etapa 01 - Customização do Tema
-        // ========================================================
+        // 關卡 01：自訂主題控制
         function clickThemePalette() {
             toggleThemePanel(document.getElementById("theme-palette-panel").classList.contains("hidden"));
         }
 
         function toggleThemePanel(show) {
-            document.getElementById("theme-palette-panel").classList.toggle("hidden", !show);
+            const panel = document.getElementById("theme-palette-panel");
+            if (panel) panel.classList.toggle("hidden", !show);
         }
 
         function selectThemeBanner(type) {
             const banner = document.getElementById("forms-banner-image");
             const pencilsOpt = document.getElementById("pencils-theme-option");
             const colorBar = document.getElementById("theme-color-bar");
+
+            if (!banner || !pencilsOpt || !colorBar) return;
 
             if (type === 'pencils') {
                 banner.style.backgroundImage = "url('https://static.vecteezy.com/system/resources/previews/072/745/614/non_2x/digital-learning-environment-students-illustration-vector.jpg')";
@@ -1360,9 +1242,7 @@
             }
         }
 
-        // ========================================================
-        // 關卡 02：手機驗證控制 / Etapa 02 - Validação de Resposta
-        // ========================================================
+        // 關卡 02：手機驗證控制
         function onRuleChange() {
             const ruleVal = document.getElementById("v-val").value;
             const warnBox = document.getElementById("tutor-box");
@@ -1370,12 +1250,12 @@
                 if (currentLang === 'zh') {
                     document.getElementById("tutor-text").innerText = "⚠️ 長度驗證已被更改為 " + ruleVal + "。為確保能精準攔截家長打錯的電話，請務必把「限制長度值」輸入為「10」碼喔！";
                 } else {
-                    document.getElementById("tutor-text").innerText = "⚠️ A validação de comprimento foi alterada para " + ruleVal + ". Para garantir a攔截 corretada telefone dos pais, insira exatamente o valor de '10'!";
+                    document.getElementById("tutor-text").innerText = "⚠️ A validação de comprimento foi alterada para " + ruleVal + ". Para garantir a identificação correta do telefone dos pais, insira exatamente o valor de '10'!";
                 }
-                warnBox.classList.remove("hidden");
+                if (warnBox) warnBox.classList.remove("hidden");
                 taskStatus[2] = false;
             } else {
-                warnBox.classList.add("hidden");
+                if (warnBox) warnBox.classList.add("hidden");
             }
             verifyPhoneFormat();
         }
@@ -1391,37 +1271,38 @@
             const err = document.getElementById("phone-err");
 
             if (ruleVal == "10" && inputVal.length === 10 && isNum) {
-                feedback.classList.remove("hidden");
-                err.classList.add("hidden");
+                if (feedback) feedback.classList.remove("hidden");
+                if (err) err.classList.add("hidden");
                 taskStatus[2] = true;
                 showToast(currentLang === 'zh' ? '📞 防呆手機完全符合 10 碼長度！成功過濾錯誤輸入！' : '📞 Formato de celular de 10 dígitos validado com sucesso! Filtro de erros ativo!');
                 updateProgressUI();
             } else {
-                feedback.classList.add("hidden");
+                if (feedback) feedback.classList.add("hidden");
                 taskStatus[2] = false;
                 if (inputVal.length > 0 && (!isNum || inputVal.length !== parseInt(ruleVal))) {
-                    err.classList.remove("hidden");
-                    if (currentLang === 'zh') {
-                        err.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> 請重新輸入符合當前限制 (${ruleVal} 碼數字) 的手機格式！`;
-                    } else {
-                        err.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> Reinsira o formato correto atendendo ao limite (${ruleVal} dígitos numéricos)!`;
+                    if (err) {
+                        err.classList.remove("hidden");
+                        if (currentLang === 'zh') {
+                            err.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> 請重新輸入符合當前限制 (${ruleVal} 碼數字) 的手機格式！`;
+                        } else {
+                            err.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-1"></i> Reinsira o formato correto atendendo ao limite (${ruleVal} dígitos numéricos)!`;
+                        }
                     }
                 } else {
-                    err.classList.add("hidden");
+                    if (err) err.classList.add("hidden");
                 }
                 updateProgressUI();
             }
         }
 
-        // ========================================================
-        // 關卡 03：解除組織網域限制 / Etapa 03 - Domínio Educacional
-        // ========================================================
+        // 關卡 03：解除組織網域限制
         function toggleDomainLock() {
             const cb = document.getElementById("domain-lock-cb");
             const screen = document.getElementById("phone-screen");
 
+            if (!cb || !screen) return;
+
             if (!cb.checked) {
-                // 解鎖狀態
                 screen.className = "flex-1 bg-emerald-600 text-white rounded-[20px] md:rounded-[24px] p-3 md:p-4 flex flex-col items-center justify-center text-center gap-2 md:gap-3 transition-all duration-500";
                 screen.innerHTML = `
                     <i class="fa-solid fa-circle-check text-3xl md:text-5xl text-white"></i>
@@ -1434,7 +1315,6 @@
                     updateProgressUI();
                 }
             } else {
-                // 鎖定狀態
                 screen.className = "flex-1 bg-rose-500 text-white rounded-[20px] md:rounded-[24px] p-3 md:p-4 flex flex-col items-center justify-center text-center gap-2 md:gap-3 transition-all duration-500";
                 screen.innerHTML = `
                     <i class="fa-solid fa-lock text-3xl md:text-5xl animate-bounce"></i>
@@ -1446,9 +1326,7 @@
             }
         }
 
-        // ========================================================
-        // 關卡 04：分流智慧路由 / Etapa 04 - Ramificação de Páginas
-        // ========================================================
+        // 關卡 04：分流智慧路由
         function verifyBranchRules() {
             if (currentStep !== 4) return;
 
@@ -1456,38 +1334,19 @@
             const rB = document.getElementById("route-b").value;
             const testZone = document.getElementById("branch-test-zone");
 
-            // A 導至 sec2 且 B 導至 sec3
             if (rA === "sec2" && rB === "sec3") {
-                testZone.classList.remove("hidden");
+                if (testZone) testZone.classList.remove("hidden");
                 taskStatus[4] = true;
                 showToast(currentLang === 'zh' ? '🗺️ 成功規劃差異化路徑！請點擊測試按鈕體驗真實分流效果。' : '🗺️ Roteamento de ramificação configurado! Use os botões de simulação para testar.');
                 updateProgressUI();
             } else {
-                testZone.classList.add("hidden");
+                if (testZone) testZone.classList.add("hidden");
                 taskStatus[4] = false;
                 updateProgressUI();
             }
         }
 
-        function simulateBranchTest(choice) {
-            if (choice === 'A') {
-                if (currentLang === 'zh') {
-                    showToast("🍽️ 模擬填答：因選擇「A. 準時出席」，下一步系統自動滑入【區段 2：午餐調查統計】！");
-                } else {
-                    showToast("🍽️ Simulação: Devido à escolha de 'A. Comparecer', o sistema guiará automaticamente para a [Seção 2: Almoço]!");
-                }
-            } else {
-                if (currentLang === 'zh') {
-                    showToast("✍️ 模擬填答：因選擇「B. 無法出席」，下一步直接略過午餐，滑入【區段 3：家長意見委託】！");
-                } else {
-                    showToast("✍️ Simulação: Devido à escolha de 'B. Não comparecer', o sistema pulará o almoço e guiará para a [Seção 3: Delegação de Opiniões]!");
-                }
-            }
-        }
-
-        // ========================================================
-        // 關卡 05：智慧自動定量截止 / Etapa 05 - Limite Automático
-        // ========================================================
+        // 關卡 05：智慧自動定量截止
         function saveLimitRules() {
             if (currentStep !== 5) return;
 
@@ -1513,21 +1372,19 @@
             }
         }
 
-        // ========================================================
-        // 關卡 06：試算表重新連結 / Etapa 06 - Sincronização de Planilha
-        // ========================================================
-        function toggleSheetsDropdown() {
-            const dropdown = document.getElementById("sheets-dropdown");
-            dropdown.classList.contains("hidden") ? dropdown.classList.remove("hidden") : dropdown.classList.add("hidden");
-        }
-
+        // 關卡 06：試算表重新連結
         function unlinkSheets() {
-            document.getElementById("sheets-dropdown").classList.add("hidden");
+            const dropdown = document.getElementById("sheets-dropdown");
+            if (dropdown) dropdown.classList.add("hidden");
             unlinkedSheetsState = true;
             
-            document.getElementById("sheets-status-badge").innerText = langPack[currentLang].sheets_status_unlinked;
-            document.getElementById("sheets-status-badge").className = "bg-rose-100 text-rose-800 text-[10px] md:text-xs px-2.5 py-0.5 rounded-full font-black inline-block";
-            document.getElementById("sheets-title").innerText = langPack[currentLang].sheets_title_unlinked;
+            if (document.getElementById("sheets-status-badge")) {
+                document.getElementById("sheets-status-badge").innerText = langPack[currentLang].sheets_status_unlinked;
+                document.getElementById("sheets-status-badge").className = "bg-rose-100 text-rose-800 text-[10px] md:text-xs px-2.5 py-0.5 rounded-full font-black inline-block";
+            }
+            if (document.getElementById("sheets-title")) {
+                document.getElementById("sheets-title").innerText = langPack[currentLang].sheets_title_unlinked;
+            }
             
             showToast(currentLang === 'zh' ? '✂️ 試算表已被拔線！歷史數據安全保存在雲端硬碟。' : '✂️ Planilha desvinculada! O histórico de dados permanece seguro no Google Drive.');
         }
@@ -1547,9 +1404,13 @@
                     onConfirm: () => {
                         unlinkedSheetsState = false;
                         
-                        document.getElementById("sheets-status-badge").innerText = currentLang === 'zh' ? '已重新綁定 (表單回應 2)' : 'Revinculado (Respostas ao formulário 2)';
-                        document.getElementById("sheets-status-badge").className = "bg-emerald-100 text-emerald-800 text-[10px] md:text-xs px-2 py-0.5 rounded-full font-black inline-block";
-                        document.getElementById("sheets-title").innerText = currentLang === 'zh' ? '115 學年度家長聯絡簿調查 (Responses) [重新建立]' : 'Pesquisa da Caderneta Escolar 115 (Respostas) [Restabelecido]';
+                        if (document.getElementById("sheets-status-badge")) {
+                            document.getElementById("sheets-status-badge").innerText = currentLang === 'zh' ? '已重新綁定 (表單回應 2)' : 'Revinculado (Respostas ao formulário 2)';
+                            document.getElementById("sheets-status-badge").className = "bg-emerald-100 text-emerald-800 text-[10px] md:text-xs px-2 py-0.5 rounded-full font-black inline-block";
+                        }
+                        if (document.getElementById("sheets-title")) {
+                            document.getElementById("sheets-title").innerText = currentLang === 'zh' ? '115 學年度家長聯絡簿調查 (Responses) [重新建立]' : 'Pesquisa da Caderneta Escolar 115 (Respostas) [Restabelecido]';
+                        }
                         
                         if (currentStep === 6) {
                             taskStatus[6] = true;
@@ -1563,154 +1424,13 @@
             }
         }
 
-        function toggleMockSheetsModal(show) {
-            document.getElementById("mock-sheets-modal").classList.toggle("hidden", !show);
-        }
-
-        // ========================================================
-        // 擬真提示與 Toast 列 / Toast de Orientações e Toasts Gerais
-        // ========================================================
-        function clickFormTab(tab) {
-            if (tab === 'questions') {
-                showToast(currentLang === 'zh' ? '📝 目前為『問題編輯區』，此處提供視覺設計與各防呆題目的設定。' : '📝 Você está na "Área de Perguntas", onde configura o visual e as validações do formulário.');
-            } else if (tab === 'responses') {
-                showToast(currentLang === 'zh' ? '📊 進入『回覆統計區』！此處可以一鍵複製圖表，或點擊綠色按鈕開啟關聯的試算表。' : '📊 Área de Respostas: Copie gráficos de dados com um clique ou acesse a Planilha conectada.');
-                toggleMockSheetsModal(true);
-            } else if (tab === 'settings') {
-                showToast(currentLang === 'zh' ? '⚙️ 進入『全域設定區』，此處提供『設為測驗』、成績手動公布、以及隨機題序的黃金分頁排雷喔。' : '⚙️ Área de Configurações: Defina exames, liberação manual de notas e ordenação aleatória.');
-            }
-        }
-
-        function showPreviewToast() {
-            showToast(currentLang === 'zh' ? '👁️ 預覽：目前為『編輯者模式』，您隨時可切換各步驟體驗填答者的手機視野。' : '👁️ Visualização: Modo Editor Ativo. Conclua etapas para ver a perspectiva do celular dos pais.');
-        }
-
-        function showSettingsToast() {
-            showToast(currentLang === 'zh' ? '⚙️ 設定已同步儲存於雲端硬碟，無須手動存檔！' : '⚙️ Configurações salvas no Google Drive em tempo real. Não há necessidade de salvar manualmente!');
-        }
-
-        function showSendToast() {
-            showToast(currentLang === 'zh' ? '✈️ 發送：在 L1 考試中，『傳送』是用來獲取填答連結或發送 Email 的重要關卡。' : '✈️ Enviar: Etapa essencial no exame L1 para obter links de resposta ou enviar e-mails de preenchimento.');
-        }
-
-        function showCsvToast() {
-            showToast(currentLang === 'zh' ? 'ℹ️ 下載回應為 .csv 檔為獨立離線分析的最佳考科重點！' : 'ℹ️ Baixar respostas em formato .csv é crucial para análise e arquivamento offline.');
-        }
-
-        function showToolbarToast(action) {
-            const msgs = {
-                zh: {
-                    add: "➕ 新增問題：L1 考試最基本的基礎！",
-                    import: "📄 匯入問題：行政省時神技，一鍵從舊表單撈取題目！",
-                    text: "TT 新增標題：當啟動『隨機題序』時，可用文字說明輔助題組。",
-                    image: "🖼️ 新增圖片：適合低年級看圖選字、理化電路看圖出題！",
-                    video: "🎥 新增影片：直覺嵌入 YouTube，打造『看完影片立即作答』的翻轉教材！",
-                    section: "🥞 新增區段：配合隨機題序的『黃金分頁法』，把姓名座號獨立防亂跑的關鍵！"
-                },
-                pt: {
-                    add: "➕ Adicionar Pergunta: A base operacional mais importante da L1!",
-                    import: "📄 Importar Perguntas: Economia de tempo incrível! Puxe perguntas de outros formulários.",
-                    text: "TT Adicionar Título: Muito útil para agrupar e organizar instruções no formulário.",
-                    image: "🖼️ Adicionar Imagem: Ótimo para avaliações visuais ou gráficos explicativos.",
-                    video: "🎥 Adicionar Vídeo: Integre vídeos do YouTube para criar exercícios interativos.",
-                    section: "🥞 Adicionar Seção: O segredo para criar seções independentes e ordenar questões de forma inteligente!"
-                }
-            };
-            showToast(msgs[currentLang][action]);
-        }
-
-        // ========================================================
-        // 🎆 HTML5 2D 物理粒子煙火特效引擎
-        // ========================================================
-        let fireworksActive = false;
-        const canvas = document.getElementById("fireworks-canvas");
-        const ctx = canvas.getContext("2d");
-        let particles = [];
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-
-        class Particle {
-            constructor(x, y, color) {
-                this.x = x;
-                this.y = y;
-                this.color = color;
-                this.radius = Math.random() * 3 + 2;
-                const angle = Math.random() * Math.PI * 2;
-                const speed = Math.random() * 6 + 4;
-                this.vx = Math.cos(angle) * speed;
-                this.vy = Math.sin(angle) * speed;
-                this.alpha = 1;
-                this.decay = Math.random() * 0.015 + 0.015;
-                this.gravity = 0.06;
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.vy += this.gravity;
-                this.alpha -= this.decay;
-            }
-            draw() {
-                ctx.save();
-                ctx.globalAlpha = this.alpha;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-                ctx.restore();
-            }
-        }
-
-        function createExplosion(x, y) {
-            const colors = ['#a855f7', '#6366f1', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
-            const color = colors[Math.floor(Math.random() * colors.length)];
-            for (let i = 0; i < 60; i++) {
-                particles.push(new Particle(x, y, color));
-            }
-        }
-
-        function animateFireworks() {
-            if (!fireworksActive) return;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles = particles.filter(p => p.alpha > 0);
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-
-            if (Math.random() < 0.06) {
-                createExplosion(Math.random() * canvas.width, Math.random() * canvas.height * 0.6);
-            }
-
-            requestAnimationFrame(animateFireworks);
-        }
-
-        // 啟動全通關慶祝 / Iniciar Celebração de Vitória
-        function startVictoryCelebration() {
-            resizeCanvas();
-            canvas.classList.remove("hidden");
-            fireworksActive = true;
-            animateFireworks();
-
-            createExplosion(canvas.width / 2, canvas.height / 3);
-            createExplosion(canvas.width * 0.3, canvas.height / 2);
-            createExplosion(canvas.width * 0.7, canvas.height / 2);
-
-            showToast(currentLang === 'zh' ? "🎉 恭喜全部防雷挑戰成功！大匯流入口已開啟！" : "🎉 Parabéns! Desafio concluído com sucesso! Portal aberto!");
-            setTimeout(() => {
-                toggleSurveyModal(true);
-            }, 800);
-        }
-
-        // 真實發送：研習問卷大匯流 / Envio Real dos Dados para Planilha
+        // 真實發送：研習問卷大匯流
         function submitRealSurvey(event) {
             event.preventDefault();
             const btn = document.getElementById("submit-survey-btn");
+            if (!btn) return;
+
             btn.disabled = true;
-            
             if (currentLang === 'zh') {
                 btn.innerHTML = `<span>發送中... 請稍候</span> <i class="fa-solid fa-spinner animate-spin"></i>`;
             } else {
@@ -1737,7 +1457,6 @@
                 urlParams.append("favorites", val);
             });
 
-            // 雙軌發送 (mode: 'no-cors' 真實寫入 Google Sheets API 後台)
             fetch(WEB_APP_API, {
                 method: "POST",
                 mode: "no-cors",
@@ -1751,20 +1470,21 @@
                 const timeStr = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
                 
                 const tableBody = document.getElementById("sheets-data-rows");
-                const newRow = document.createElement("tr");
-                newRow.className = "border-b bg-emerald-50/50 hover:bg-emerald-100 transition-all text-slate-800 font-extrabold";
-                newRow.innerHTML = `
-                    <td class="p-2 md:p-3 border text-slate-500">${timeStr}</td>
-                    <td class="p-2 md:p-3 border">${formData.get("name")}</td>
-                    <td class="p-2 md:p-3 border">${formData.get("school")}</td>
-                    <td class="p-2 md:p-3 border text-purple-700">${formData.get("most_rewarding")}</td>
-                    <td class="p-2 md:p-3 border text-indigo-700">${formData.get("most_challenging")}</td>
-                    <td class="p-2 md:p-3 border text-emerald-800">${formData.get("opinion")}</td>
-                    <td class="p-2 md:p-3 border">${favoritesChecked.join(", ")}</td>
-                `;
-                tableBody.insertBefore(newRow, tableBody.firstChild);
+                if (tableBody) {
+                    const newRow = document.createElement("tr");
+                    newRow.className = "border-b bg-emerald-50/50 hover:bg-emerald-100 transition-all text-slate-800 font-extrabold";
+                    newRow.innerHTML = `
+                        <td class="p-2 md:p-3 border text-slate-500">${timeStr}</td>
+                        <td class="p-2 md:p-3 border">${formData.get("name")}</td>
+                        <td class="p-2 md:p-3 border">${formData.get("school")}</td>
+                        <td class="p-2 md:p-3 border text-purple-700">${formData.get("most_rewarding")}</td>
+                        <td class="p-2 md:p-3 border text-indigo-700">${formData.get("most_challenging")}</td>
+                        <td class="p-2 md:p-3 border text-emerald-800">${formData.get("opinion")}</td>
+                        <td class="p-2 md:p-3 border">${favoritesChecked.join(", ")}</td>
+                    `;
+                    tableBody.insertBefore(newRow, tableBody.firstChild);
+                }
 
-                // Replaces standard browser alert() with beautiful custom bilingual modal dialog
                 const successTitle = currentLang === 'zh' ? "🎉 提交成功！" : "🎉 Enviado com Sucesso!";
                 const successDesc = currentLang === 'zh' ? 
                     "恭喜！資料已透過安全連線，1 秒寫入講師雲端後台！" :
@@ -1777,7 +1497,7 @@
                     type: 'alert',
                     onConfirm: () => {
                         toggleSurveyModal(false);
-                        toggleMockSheetsModal(true); // 自動開啟數據試算表展示神奇的匯流
+                        toggleMockSheetsModal(true);
                     }
                 });
             })
@@ -1798,12 +1518,13 @@
             });
         }
 
-        // 全局 Toast 提示組件 / Função de Feedback Rápido Toast
+        // 智慧通知浮動 Toast
         function showToast(msg) {
             const toast = document.getElementById("toast-notification");
             const text = document.getElementById("toast-text");
-            text.innerText = msg;
+            if (!toast || !text) return;
 
+            text.innerText = msg;
             toast.classList.remove("translate-y-20", "opacity-0");
             toast.classList.add("translate-y-0", "opacity-100");
 
@@ -1811,6 +1532,17 @@
                 toast.classList.remove("translate-y-0", "opacity-100");
                 toast.classList.add("translate-y-20", "opacity-0");
             }, 4500);
+        }
+
+        // 智慧提示
+        function toggleMockSheetsModal(show) {
+            const modal = document.getElementById("mock-sheets-modal");
+            if (modal) modal.classList.toggle("hidden", !show);
+        }
+
+        // 初始化視窗監聽
+        window.onload = function () {
+            setLanguage('zh'); // 確保預設中文在首頁載入時完美對接與啟動
         }
     </script>
 </body>

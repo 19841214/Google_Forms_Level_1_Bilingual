@@ -585,6 +585,24 @@
         </div>
     </div>
 
+    <!-- 🌟 自訂對話框 (替代 alert 與 confirm) / Custom Dialog Modal (Replaces alert & confirm) -->
+    <div id="custom-dialog-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 z-50">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-md p-6 space-y-6 shadow-2xl relative">
+            <div class="flex items-start gap-4">
+                <div id="dialog-icon-container" class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0">
+                    <!-- Dynamically loaded icon -->
+                </div>
+                <div class="space-y-1 flex-1">
+                    <h3 id="dialog-title" class="text-lg font-black text-white">對話框標題</h3>
+                    <p id="dialog-desc" class="text-sm text-slate-300 leading-relaxed">對話框詳細說明內容...</p>
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3" id="dialog-actions">
+                <!-- Action buttons loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
     <!-- 🎆 Canvas 全螢幕煙火畫布 (僅在通關慶祝時顯現) -->
     <canvas id="fireworks-canvas" class="fixed inset-0 pointer-events-none z-40 hidden"></canvas>
 
@@ -717,7 +735,10 @@
                 chk_opt_3: '網域鎖免卡關',
                 chk_opt_4: '分流智慧路由',
                 chk_opt_5: '定量自動截止',
-                chk_opt_6: '試算表重新連結'
+                chk_opt_6: '試算表重新連結',
+                dialog_btn_ok: "確定",
+                dialog_btn_cancel: "取消",
+                dialog_btn_confirm: "確認"
             },
             pt: {
                 header_title: 'Google Forms L1 <span class="text-purple-400">Simulador de Campus Inteligente</span>',
@@ -819,7 +840,10 @@
                 chk_opt_3: 'Desvio de Bloqueio',
                 chk_opt_4: 'Rotas de Ramificação',
                 chk_opt_5: 'Fechamento Automático',
-                chk_opt_6: 'Revinculação de Planilha'
+                chk_opt_6: 'Revinculação de Planilha',
+                dialog_btn_ok: "OK",
+                dialog_btn_cancel: "Cancelar",
+                dialog_btn_confirm: "Confirmar"
             }
         };
 
@@ -915,11 +939,6 @@
             }
         };
 
-        // 頁面初始化 / Inicialização
-        window.onload = function() {
-            setLanguage('zh'); // 預設使用中文 / Padrão em Chinês
-        };
-
         // 雙語切換核心機制 / Função de Alternância de Idioma
         function setLanguage(lang) {
             currentLang = lang;
@@ -946,12 +965,24 @@
             document.getElementById("tutor-title").innerHTML = pack.tutor_title;
             document.getElementById("module-feedback-text").innerText = pack.module_feedback_text;
 
-            // Forms 頂部欄位 / Cabeçalhos do Simulador
+            // Forms 頂部與按鈕 Title / Tooltips de ferramentas
             document.getElementById("form-file-title").innerText = pack.form_file_title;
             document.getElementById("questions-tab-btn").innerText = pack.tab_questions;
             document.getElementById("responses-tab-btn").innerText = pack.tab_responses;
             document.getElementById("settings-tab-btn").innerText = pack.tab_settings;
             document.getElementById("send-btn").innerText = lang === 'zh' ? '傳送' : 'Enviar';
+
+            document.getElementById("palette-btn").title = lang === 'zh' ? '自訂主題' : 'Personalizar Tema';
+            document.getElementById("preview-btn").title = lang === 'zh' ? '預覽' : 'Visualização';
+            if (document.getElementById("settings-btn")) {
+                document.getElementById("settings-btn").title = lang === 'zh' ? '設定' : 'Configurações';
+            }
+
+            // 更新行動端摺疊按鈕 / Atualizar botão mobile
+            const mobileToggleText = document.getElementById("mobile-toggle-btn-text");
+            if (mobileToggleText) {
+                mobileToggleText.innerHTML = isMobileGuideCollapsed ? pack.mobile_toggle_expand : pack.mobile_toggle_collapse;
+            }
 
             // 工具列提示 / Tooltips de ferramentas
             document.getElementById("tool-add").title = lang === 'zh' ? '新增問題' : 'Adicionar pergunta';
@@ -971,7 +1002,7 @@
             if (!taskStatus[1]) {
                 document.getElementById("banner-text").innerText = pack.banner_text;
             } else {
-                document.getElementById("banner-text").innerText = lang === 'zh' ? '🌈 彩色鉛筆校園網網' : '🌈 Rede de Cabeçalho de Lápis';
+                document.getElementById("banner-text").innerText = lang === 'zh' ? '🌈 彩色鉛筆校園網' : '🌈 Rede de Cabeçalho de Lápis';
             }
 
             // 編輯器主卡片 / Cards do Editor
@@ -1021,8 +1052,6 @@
             // 下拉選項更新 / Atualizar opções de seleção
             const rA = document.getElementById("route-a");
             const rB = document.getElementById("route-b");
-            const rAVal = rA.value;
-            const rBVal = rB.value;
             
             rA.options[0].text = lang === 'zh' ? '繼續前往下一個區段' : 'Continuar para a próxima seção';
             rA.options[1].text = lang === 'zh' ? '前往區段 2 (午餐調查)' : 'Ir para a seção 2 (Pesquisa de Almoço)';
@@ -1101,6 +1130,68 @@
             switchStep(currentStep);
         }
 
+        // 🌟 自訂對話框機制 (代替 alert 與 confirm) / Custom Dialog System (Replaces Native Popups)
+        function showCustomDialog({ title, desc, icon, type, onConfirm, onCancel }) {
+            const modal = document.getElementById("custom-dialog-modal");
+            const dTitle = document.getElementById("dialog-title");
+            const dDesc = document.getElementById("dialog-desc");
+            const dIconContainer = document.getElementById("dialog-icon-container");
+            const dActions = document.getElementById("dialog-actions");
+
+            dTitle.innerText = title;
+            dDesc.innerText = desc;
+
+            // 設定圖示 / Icon styles
+            dIconContainer.className = `w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${icon}`;
+            let iconHtml = "";
+            if (icon.includes("emerald")) {
+                iconHtml = `<i class="fa-solid fa-circle-check text-xl"></i>`;
+            } else if (icon.includes("rose")) {
+                iconHtml = `<i class="fa-solid fa-circle-xmark text-xl"></i>`;
+            } else {
+                iconHtml = `<i class="fa-solid fa-link text-xl"></i>`;
+            }
+            dIconContainer.innerHTML = iconHtml;
+
+            // 清空並重新渲染按鈕 / Reset buttons
+            dActions.innerHTML = "";
+
+            const pack = langPack[currentLang];
+
+            if (type === 'confirm') {
+                const cancelBtn = document.createElement("button");
+                cancelBtn.className = "px-4 py-2 text-sm font-bold text-slate-400 hover:text-slate-200 transition-all";
+                cancelBtn.innerText = pack.dialog_btn_cancel;
+                cancelBtn.onclick = () => {
+                    modal.classList.add("hidden");
+                    if (onCancel) onCancel();
+                };
+
+                const confirmBtn = document.createElement("button");
+                confirmBtn.className = "bg-purple-600 hover:bg-purple-700 text-white font-black px-4 py-2 rounded-xl text-sm transition-all shadow-md";
+                confirmBtn.innerText = pack.dialog_btn_confirm;
+                confirmBtn.onclick = () => {
+                    modal.classList.add("hidden");
+                    if (onConfirm) onConfirm();
+                };
+
+                dActions.appendChild(cancelBtn);
+                dActions.appendChild(confirmBtn);
+            } else {
+                // Alert type
+                const okBtn = document.createElement("button");
+                okBtn.className = "bg-purple-600 hover:bg-purple-700 text-white font-black px-6 py-2 rounded-xl text-sm transition-all shadow-md";
+                okBtn.innerText = pack.dialog_btn_ok;
+                okBtn.onclick = () => {
+                    modal.classList.add("hidden");
+                    if (onConfirm) onConfirm();
+                };
+                dActions.appendChild(okBtn);
+            }
+
+            modal.classList.remove("hidden");
+        }
+
         // 行動端收合控制 / Toggle para Mobile
         function toggleMobileGuide() {
             const content = document.getElementById("collapsible-guide-content");
@@ -1166,7 +1257,7 @@
             updateProgressUI();
         }
 
-        // 更新進度與按鈕狀態 / Atualizar Barra de Progresso e Botões
+        // 更新進度與按鈕狀態 / 更新進度與按鈕狀態 / Atualizar Barra de Progresso e Botões
         function updateProgressUI() {
             const percent = (currentStep / 6) * 100;
             document.getElementById("progress-bar").style.width = `${percent}%`;
@@ -1443,23 +1534,30 @@
 
         function openMockSheets() {
             if (unlinkedSheetsState) {
-                const confirmMsg = currentLang === 'zh' ? 
-                    "🔌 表單目前無連結，是否重新【選取現有的試算表】以接回歷史作答水管？" :
-                    "🔌 O formulário está desconectado. Deseja [Selecionar Planilha Existente] para reconectar os tubos de dados?";
-                const reLink = confirm(confirmMsg);
-                if (reLink) {
-                    unlinkedSheetsState = false;
-                    
-                    document.getElementById("sheets-status-badge").innerText = currentLang === 'zh' ? '已重新綁定 (表單回應 2)' : 'Revinculado (Respostas ao formulário 2)';
-                    document.getElementById("sheets-status-badge").className = "bg-emerald-100 text-emerald-800 text-[10px] md:text-xs px-2.5 py-0.5 rounded-full font-black inline-block";
-                    document.getElementById("sheets-title").innerText = currentLang === 'zh' ? '115 學年度家長聯絡簿調查 (Responses) [重新建立]' : 'Pesquisa da Caderneta Escolar 115 (Respostas) [Restabelecido]';
-                    
-                    if (currentStep === 6) {
-                        taskStatus[6] = true;
-                        showToast(currentLang === 'zh' ? '💚 重新對接大復活！試算表自動產生 Responses 分頁重新同步！' : '💚 Conexão de dados restaurada! Planilha gerou aba Responses síncrona com sucesso!');
-                        updateProgressUI();
+                const title = currentLang === 'zh' ? "🔌 重新連結試算表" : "🔌 Reconectar Planilha";
+                const desc = currentLang === 'zh' ? 
+                    "表單目前無連結，是否重新【選取現有的試算表】以接回歷史作答水管？" :
+                    "O formulário está desconectado. Deseja [Selecionar Planilha Existente] para reconectar os tubos de dados?";
+                
+                showCustomDialog({
+                    title: title,
+                    desc: desc,
+                    icon: 'fa-link text-emerald-400 bg-emerald-950/50',
+                    type: 'confirm',
+                    onConfirm: () => {
+                        unlinkedSheetsState = false;
+                        
+                        document.getElementById("sheets-status-badge").innerText = currentLang === 'zh' ? '已重新綁定 (表單回應 2)' : 'Revinculado (Respostas ao formulário 2)';
+                        document.getElementById("sheets-status-badge").className = "bg-emerald-100 text-emerald-800 text-[10px] md:text-xs px-2 py-0.5 rounded-full font-black inline-block";
+                        document.getElementById("sheets-title").innerText = currentLang === 'zh' ? '115 學年度家長聯絡簿調查 (Responses) [重新建立]' : 'Pesquisa da Caderneta Escolar 115 (Respostas) [Restabelecido]';
+                        
+                        if (currentStep === 6) {
+                            taskStatus[6] = true;
+                            showToast(currentLang === 'zh' ? '💚 重新對接大復活！試算表自動產生 Responses 分頁重新同步！' : '💚 Conexão de dados restaurada! Planilha gerou aba Responses síncrona com sucesso!');
+                            updateProgressUI();
+                        }
                     }
-                }
+                });
             } else {
                 toggleMockSheetsModal(true);
             }
@@ -1607,18 +1705,7 @@
             }, 800);
         }
 
-        function toggleSurveyModal(show) {
-            document.getElementById("survey-modal").classList.toggle("hidden", !show);
-            if (!show) {
-                fireworksActive = false;
-                canvas.classList.add("hidden");
-                particles = [];
-            }
-        }
-
-        // ========================================================
         // 真實發送：研習問卷大匯流 / Envio Real dos Dados para Planilha
-        // ========================================================
         function submitRealSurvey(event) {
             event.preventDefault();
             const btn = document.getElementById("submit-survey-btn");
@@ -1677,17 +1764,33 @@
                 `;
                 tableBody.insertBefore(newRow, tableBody.firstChild);
 
-                const alertMsg = currentLang === 'zh' ? 
-                    "🎉 恭喜！資料已透過安全連線，1 秒寫入講師雲端後台！" :
-                    "🎉 Parabéns! Dados enviados via conexão segura e inseridos na nuvem em 1 segundo!";
-                alert(alertMsg);
+                // Replaces standard browser alert() with beautiful custom bilingual modal dialog
+                const successTitle = currentLang === 'zh' ? "🎉 提交成功！" : "🎉 Enviado com Sucesso!";
+                const successDesc = currentLang === 'zh' ? 
+                    "恭喜！資料已透過安全連線，1 秒寫入講師雲端後台！" :
+                    "Parabéns! Dados enviados via conexão segura e inseridos na nuvem em 1 segundo!";
                 
-                toggleSurveyModal(false);
-                toggleMockSheetsModal(true); // 自動開啟數據試算表展示神奇的匯流
+                showCustomDialog({
+                    title: successTitle,
+                    desc: successDesc,
+                    icon: 'fa-circle-check text-emerald-400 bg-emerald-950/50',
+                    type: 'alert',
+                    onConfirm: () => {
+                        toggleSurveyModal(false);
+                        toggleMockSheetsModal(true); // 自動開啟數據試算表展示神奇的匯流
+                    }
+                });
             })
             .catch(err => {
                 console.error("Submission error", err);
-                alert(currentLang === 'zh' ? "發送失敗，請檢查網路。" : "Falha no envio, por favor verifique sua conexão.");
+                const failTitle = currentLang === 'zh' ? "❌ 發送失敗" : "❌ Falha no Envio";
+                const failDesc = currentLang === 'zh' ? "發送失敗，請檢查網路。" : "Falha no envio, por favor verifique sua conexão.";
+                showCustomDialog({
+                    title: failTitle,
+                    desc: failDesc,
+                    icon: 'fa-circle-xmark text-rose-500 bg-rose-950/50',
+                    type: 'alert'
+                });
             })
             .finally(() => {
                 btn.disabled = false;

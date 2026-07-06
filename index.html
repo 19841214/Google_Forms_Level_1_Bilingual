@@ -143,37 +143,43 @@
         </section>
 
         <!-- ======================================================== -->
-        <!-- 右半部：高擬真 Google 表單編輯器/填答端模擬空間 (手機自適應，電腦佔 8/12 寬) -->
+        <!-- 右半部：高擬真 Google 表單編輯器/填答端模擬空間 (全面優化防擠壓) -->
         <!-- ======================================================== -->
         <section class="w-full lg:w-8/12 bg-slate-950 flex flex-col p-4 md:p-8 overflow-y-auto relative no-scrollbar">
             
             <!-- 模擬器外圍框架 -->
             <div id="forms-mockup" class="w-full max-w-4xl mx-auto rounded-3xl shadow-2xl overflow-hidden bg-slate-100 text-slate-800 flex flex-col border border-slate-200 min-h-[550px] md:min-h-[650px] transition-all duration-300 relative">
                 
-                <!-- Google Forms 頂部擬真導覽與功能區 -->
-                <div class="bg-white border-b border-slate-200 px-4 md:px-6 py-3 md:py-4 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0 select-none">
-                    <div class="flex items-center gap-2 md:gap-3">
-                        <img src="https://static.vecteezy.com/system/resources/previews/042/158/705/non_2x/google-forms-logo-icon-free-vector.jpg" alt="Logo" class="w-8 h-8 md:w-10 md:h-10 object-contain shrink-0">
-                        <span id="form-file-title" class="font-bold text-base md:text-xl text-slate-700 truncate max-w-[150px] sm:max-w-none">115 學年度家長聯絡簿調查</span>
+                <!-- Google Forms 頂部擬真導覽與功能區 (改為全單行 flex-row 且完美防溢出) -->
+                <div class="bg-white border-b border-slate-200 px-2 sm:px-4 md:px-6 py-2.5 md:py-4 flex flex-row items-center justify-between gap-1.5 sm:gap-3 shrink-0 select-none overflow-hidden">
+                    
+                    <!-- 左側：標誌與檔案名稱 (在各種尺寸下皆安全限制寬度防撐版) -->
+                    <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0 flex-1 sm:flex-initial">
+                        <img src="https://static.vecteezy.com/system/resources/previews/042/158/705/non_2x/google-forms-logo-icon-free-vector.jpg" alt="Logo" class="w-6.5 h-6.5 sm:w-8 sm:h-8 md:w-10 md:h-10 object-contain shrink-0">
+                        <span id="form-file-title" class="font-bold text-xs sm:text-sm md:text-lg lg:text-xl text-slate-700 truncate max-w-[90px] xs:max-w-[130px] sm:max-w-[180px] md:max-w-[240px] lg:max-w-[300px]">115 學年度家長聯絡簿調查</span>
                     </div>
-                    <!-- 擬真頁籤導覽 (問題/回覆/設定) -->
-                    <div class="flex gap-1 bg-slate-100 p-1 rounded-xl shrink-0">
-                        <button id="questions-tab-btn" onclick="clickFormTab('questions')" class="px-3 sm:px-5 py-1.5 rounded-lg text-xs md:text-sm font-black text-purple-700 bg-white shadow-sm transition-all">問題</button>
-                        <button id="responses-tab-btn" onclick="clickFormTab('responses')" class="px-3 sm:px-5 py-1.5 rounded-lg text-xs md:text-sm font-bold text-slate-600 hover:text-slate-900 transition-all">回覆 (0)</button>
-                        <button id="settings-tab-btn" onclick="clickFormTab('settings')" class="px-3 sm:px-5 py-1.5 rounded-lg text-xs md:text-sm font-bold text-slate-600 hover:text-slate-900 transition-all">設定</button>
+
+                    <!-- 中間：擬真頁籤導覽 (調整按鈕寬度與文字大小，在小螢幕也能塞下葡萄牙語) -->
+                    <div class="flex gap-0.5 bg-slate-100 p-0.5 rounded-lg shrink-0">
+                        <button id="questions-tab-btn" onclick="clickFormTab('questions')" class="px-1.5 sm:px-4 py-1 rounded-md text-[10px] sm:text-xs md:text-sm font-black text-purple-700 bg-white shadow-sm transition-all">問題</button>
+                        <button id="responses-tab-btn" onclick="clickFormTab('responses')" class="px-1.5 sm:px-4 py-1 rounded-md text-[10px] sm:text-xs md:text-sm font-bold text-slate-600 hover:text-slate-900 transition-all">回覆 (0)</button>
+                        <button id="settings-tab-btn" onclick="clickFormTab('settings')" class="px-1.5 sm:px-4 py-1 rounded-md text-[10px] sm:text-xs md:text-sm font-bold text-slate-600 hover:text-slate-900 transition-all">設定</button>
                     </div>
-                    <!-- 模擬功能按鈕列 -->
-                    <div class="flex items-center gap-2 shrink-0">
-                        <button onclick="clickThemePalette()" class="w-10 h-10 md:w-12 md:h-12 rounded-full hover:bg-slate-100 text-slate-600 flex items-center justify-center transition-all relative" id="palette-btn" title="自訂主題">
-                            <i class="fa-solid fa-palette text-lg md:text-xl"></i>
+
+                    <!-- 右側：功能控制按鈕列 (永不換行，w-8/h-8 讓小螢幕也安全塞下調色盤) -->
+                    <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+                        <button onclick="clickThemePalette()" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full hover:bg-slate-100 text-slate-600 flex items-center justify-center transition-all relative" id="palette-btn" title="自訂主題">
+                            <i class="fa-solid fa-palette text-sm sm:text-base md:text-lg"></i>
+                            <!-- 閃爍提示光暈：指引學員點選此處 -->
+                            <span id="palette-glow" class="absolute top-1 right-1 w-2.5 h-2.5 bg-purple-600 rounded-full animate-ping"></span>
                         </button>
-                        <button onclick="showPreviewToast()" class="w-10 h-10 md:w-12 md:h-12 rounded-full hover:bg-slate-100 text-slate-600 flex items-center justify-center transition-all" id="preview-btn" title="預覽">
-                            <i class="fa-solid fa-eye text-lg md:text-xl"></i>
+                        <button onclick="showPreviewToast()" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full hover:bg-slate-100 text-slate-600 flex items-center justify-center transition-all" id="preview-btn" title="預覽">
+                            <i class="fa-solid fa-eye text-sm sm:text-base md:text-lg"></i>
                         </button>
-                        <button onclick="showSettingsToast()" class="hidden sm:flex w-10 h-10 md:w-12 md:h-12 rounded-full hover:bg-slate-100 text-slate-600 items-center justify-center transition-all" id="settings-btn" title="設定">
-                            <i class="fa-solid fa-gear text-lg md:text-xl"></i>
+                        <button id="settings-btn" onclick="showSettingsToast()" class="hidden sm:flex w-8 h-8 sm:w-10 sm:h-10 rounded-full hover:bg-slate-100 text-slate-600 items-center justify-center transition-all" title="設定">
+                            <i class="fa-solid fa-gear text-sm sm:text-base md:text-lg"></i>
                         </button>
-                        <button id="send-btn" onclick="showSendToast()" class="bg-purple-700 hover:bg-purple-800 text-white font-bold px-4 md:px-6 py-2 md:py-2.5 rounded-xl transition-all shadow-md shadow-purple-500/10 text-xs md:text-sm">
+                        <button id="send-btn" onclick="showSendToast()" class="bg-purple-700 hover:bg-purple-800 text-white font-bold px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl transition-all shadow-md shadow-purple-500/10 text-[10px] sm:text-xs md:text-sm">
                             傳送
                         </button>
                     </div>
@@ -872,7 +878,7 @@
                 4: {
                     title: "智慧路徑與分流",
                     badge: "實踐模組 04",
-                    pain: "不要強迫不出席家長填寫葷食！對於不同作答者，透過『根據答案前往特定區段 (Branching)』分流引導，是最溫暖的問卷體驗。",
+                    pain: "不要強迫不出席家長填寫葷食！對於不同作戰者，透過『根據答案前往特定區段 (Branching)』分流引導，是最溫暖的問卷體驗。",
                     guide: "<p>1. 請將選項 <strong>「A. 準時出席」</strong> 旁的下拉選單，指路至 <strong>「前往區段 2 (午餐調查)」</strong>。</p><p>2. 將選項 <strong>「B. 無法出席」</strong> 旁的下拉選單，指路至 <strong>「前往區段 3 (意見委託)」</strong>。</p><p>3. 當指路正確，即可在下方亮起「模擬體驗按鈕」，親自測試分流！</p>",
                     tutor: "請特別留意：在 L1 小考測驗模式下，若使用分流，每位學生作答題數不同，總分基底會打架。因此，有正式分數計算的考卷絕不能開啟分流路由！"
                 },
@@ -957,7 +963,7 @@
             const pack = langPack[lang];
             if (!pack) return;
 
-            // 使用防禦性 try-catch 包裹所有 DOM 更新，防止任何單一 ID 缺失導致整體語系切換中斷
+            // 使用防禦性 try-catch 包裹所有 DOM 更新，防止任何單一 ID 缺失或暫時延遲導致整體語系切換中斷
             try {
                 if (document.getElementById("header-title")) document.getElementById("header-title").innerHTML = pack.header_title;
                 if (document.getElementById("header-subtitle")) document.getElementById("header-subtitle").innerText = pack.header_subtitle;
@@ -967,7 +973,7 @@
                 if (document.getElementById("tutor-title")) document.getElementById("tutor-title").innerHTML = pack.tutor_title;
                 if (document.getElementById("module-feedback-text")) document.getElementById("module-feedback-text").innerText = pack.module_feedback_text;
 
-                // Forms 頂部與按鈕 Title
+                // Forms 頂部與按鈕 Title (使用高度適應)
                 if (document.getElementById("form-file-title")) document.getElementById("form-file-title").innerText = pack.form_file_title;
                 if (document.getElementById("questions-tab-btn")) document.getElementById("questions-tab-btn").innerText = pack.tab_questions;
                 if (document.getElementById("responses-tab-btn")) document.getElementById("responses-tab-btn").innerText = pack.tab_responses;
@@ -1206,7 +1212,135 @@
             modal.classList.remove("hidden");
         }
 
+        // 📱 行動端收納功能切換控制
+        function toggleMobileGuide() {
+            const content = document.getElementById("collapsible-guide-content");
+            isMobileGuideCollapsed = !isMobileGuideCollapsed;
+            setLanguage(currentLang); // 動態重新生成說明文字與按鈕
+        }
+
+        // 關卡切換狀態管理
+        function switchStep(stepNum) {
+            currentStep = stepNum;
+            
+            // 切換步驟時自動展開說明，以便學員能看到新關卡的指示
+            if (isMobileGuideCollapsed) {
+                isMobileGuideCollapsed = false;
+            }
+
+            // 更新上方 Tab CSS 樣式
+            for (let i = 1; i <= 6; i++) {
+                const btn = document.getElementById(`tab-${i}`);
+                if (i === stepNum) {
+                    btn.className = "py-3 md:py-4 text-purple-400 border-b-4 border-purple-500 bg-slate-800/30 font-black transition-all";
+                } else {
+                    btn.className = "py-3 md:py-4 text-slate-500 hover:text-slate-300 transition-all font-bold";
+                }
+            }
+
+            // 更新左半邊導航說明
+            const data = stepDetails[currentLang][stepNum];
+            document.getElementById("step-badge").innerText = data.badge;
+            document.getElementById("step-title").innerText = data.title;
+            document.getElementById("step-pain").innerText = data.pain;
+            document.getElementById("step-guide").innerHTML = data.guide;
+            
+            // 溫馨提示展示
+            const tBox = document.getElementById("tutor-box");
+            if (data.tutor) {
+                document.getElementById("tutor-text").innerText = data.tutor;
+                tBox.classList.remove("hidden");
+            } else {
+                tBox.classList.add("hidden");
+            }
+
+            // 右側卡片可視度管理 (智慧關卡鎖：第一關時完全隱藏後面題卡)
+            document.getElementById("q-phone-card").classList.toggle("hidden", stepNum !== 2);
+            document.getElementById("q-restrict-card").classList.toggle("hidden", stepNum !== 3);
+            document.getElementById("q-branch-card").classList.toggle("hidden", stepNum !== 4);
+            document.getElementById("q-limit-card").classList.toggle("hidden", stepNum !== 5);
+            document.getElementById("q-sheets-card").classList.toggle("hidden", stepNum !== 6);
+
+            updateProgressUI();
+        }
+
+        // 更新進度與按鈕狀態
+        function updateProgressUI() {
+            const percent = (currentStep / 6) * 100;
+            document.getElementById("progress-bar").style.width = `${percent}%`;
+            document.getElementById("progress-text").innerText = `${currentStep} / 6`;
+
+            // 隱藏/顯示調色盤光暈引導學員 (第一步未過時閃爍)
+            const glow = document.getElementById("palette-glow");
+            if (glow) {
+                if (taskStatus[1]) {
+                    glow.classList.add("hidden");
+                } else {
+                    glow.classList.remove("hidden");
+                }
+            }
+
+            // 上方頁籤動態通關打勾 ✓
+            for (let i = 1; i <= 6; i++) {
+                const checkBadge = document.getElementById(`check-${i}`);
+                if (taskStatus[i]) {
+                    checkBadge.classList.remove("hidden");
+                } else {
+                    checkBadge.classList.add("hidden");
+                }
+            }
+
+            // 下方下一步控制鈕
+            const nextBtn = document.getElementById("next-btn");
+            const btnText = document.getElementById("next-btn-text");
+            const btnIcon = document.getElementById("next-btn-icon");
+            const feedback = document.getElementById("module-feedback");
+
+            // 檢查 6 個是否全部完成了
+            const allCleared = Object.values(taskStatus).every(val => val === true);
+
+            if (allCleared) {
+                feedback.classList.remove("hidden");
+                nextBtn.disabled = false;
+                nextBtn.className = "w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 md:py-5 rounded-2xl transition-all flex items-center justify-center gap-2 md:gap-3 text-base md:text-xl shadow-lg shadow-emerald-500/20 animate-bounce cursor-pointer";
+                btnText.innerText = langPack[currentLang].next_btn_all_clear;
+                btnIcon.className = "fa-solid fa-trophy";
+                return;
+            }
+
+            const currentCleared = taskStatus[currentStep];
+
+            if (currentCleared) {
+                feedback.classList.remove("hidden");
+                nextBtn.disabled = false;
+                nextBtn.className = "w-full bg-purple-600 hover:bg-purple-700 text-white font-black py-4 md:py-5 rounded-2xl transition-all flex items-center justify-center gap-2 md:gap-3 text-base md:text-xl shadow-lg shadow-purple-500/10 cursor-pointer";
+                btnText.innerText = (currentStep < 6) ? `${langPack[currentLang].next_btn_unlock}0${currentStep + 1} ➔` : (currentLang === 'zh' ? "請完成未通關的其他關卡" : "Complete as etapas restantes");
+                btnIcon.className = "fa-solid fa-arrow-right";
+            } else {
+                feedback.classList.add("hidden");
+                nextBtn.disabled = true;
+                nextBtn.className = "w-full bg-slate-800 text-slate-500 font-black py-4 md:py-5 rounded-2xl transition-all flex items-center justify-center gap-2 md:gap-3 text-base md:text-xl shadow-lg disabled:cursor-not-allowed";
+                btnText.innerText = langPack[currentLang].next_btn_lock;
+                btnIcon.className = "fa-solid fa-lock";
+            }
+        }
+
+        // 處理主前進按鈕點擊
+        function handleNextAction() {
+            const allCleared = Object.values(taskStatus).every(val => val === true);
+            if (allCleared) {
+                startVictoryCelebration();
+                return;
+            }
+
+            if (taskStatus[currentStep] && currentStep < 6) {
+                switchStep(currentStep + 1);
+            }
+        }
+
+        // ========================================================
         // 關卡 01：自訂主題控制
+        // ========================================================
         function clickThemePalette() {
             toggleThemePanel(document.getElementById("theme-palette-panel").classList.contains("hidden"));
         }
@@ -1242,7 +1376,9 @@
             }
         }
 
+        // ========================================================
         // 關卡 02：手機驗證控制
+        // ========================================================
         function onRuleChange() {
             const ruleVal = document.getElementById("v-val").value;
             const warnBox = document.getElementById("tutor-box");
@@ -1295,7 +1431,9 @@
             }
         }
 
+        // ========================================================
         // 關卡 03：解除組織網域限制
+        // ========================================================
         function toggleDomainLock() {
             const cb = document.getElementById("domain-lock-cb");
             const screen = document.getElementById("phone-screen");
@@ -1326,7 +1464,9 @@
             }
         }
 
+        // ========================================================
         // 關卡 04：分流智慧路由
+        // ========================================================
         function verifyBranchRules() {
             if (currentStep !== 4) return;
 
@@ -1346,7 +1486,9 @@
             }
         }
 
+        // ========================================================
         // 關卡 05：智慧自動定量截止
+        // ========================================================
         function saveLimitRules() {
             if (currentStep !== 5) return;
 
@@ -1372,7 +1514,14 @@
             }
         }
 
+        // ========================================================
         // 關卡 06：試算表重新連結
+        // ========================================================
+        function toggleSheetsDropdown() {
+            const dropdown = document.getElementById("sheets-dropdown");
+            if (dropdown) dropdown.classList.toggle("hidden");
+        }
+
         function unlinkSheets() {
             const dropdown = document.getElementById("sheets-dropdown");
             if (dropdown) dropdown.classList.add("hidden");
@@ -1424,7 +1573,156 @@
             }
         }
 
-        // 真實發送：研習問卷大匯流
+        // ========================================================
+        // 擬真功能與 Toast 輔助資訊
+        // ========================================================
+        function clickFormTab(tab) {
+            if (tab === 'questions') {
+                showToast(currentLang === 'zh' ? '📝 目前為『問題編輯區』，此處提供視覺設計與各防呆題目的設定。' : '📝 Você está na "Área de Perguntas", onde configura o visual e as validações do formulário.');
+            } else if (tab === 'responses') {
+                showToast(currentLang === 'zh' ? '📊 進入『回覆統計區』！此處可以一鍵複製圖表，或點擊綠色按鈕開啟關聯的試算表。' : '📊 Área de Respostas: Copie gráficos de dados com um clique ou acesse a Planilha conectada.');
+                toggleMockSheetsModal(true);
+            } else if (tab === 'settings') {
+                showToast(currentLang === 'zh' ? '⚙️ 進入『全域設定區』，此處提供『設為測驗』、成績手動公布、以及隨機題序的黃金分頁排雷喔。' : '⚙️ Área de Configurações: Defina exames, liberação manual de notas e ordenação aleatória.');
+            }
+        }
+
+        function showPreviewToast() {
+            showToast(currentLang === 'zh' ? '👁️ 預覽：目前為『編輯者模式』，您隨時可切換各步驟體驗填答者的手機視野。' : '👁️ Visualização: Modo Editor Ativo. Conclua etapas para ver a perspectiva do celular dos pais.');
+        }
+
+        function showSettingsToast() {
+            showToast(currentLang === 'zh' ? '⚙️ 設定已同步儲存於雲端硬碟，無須手動存檔！' : '⚙️ Configurações salvas no Google Drive em tempo real. Não há necessidade de salvar manualmente!');
+        }
+
+        function showSendToast() {
+            showToast(currentLang === 'zh' ? '✈️ 發送：在 L1 考試中，『傳送』是用來獲取填答連結或發送 Email 的重要關卡。' : '✈️ Enviar: Etapa essencial no exame L1 para obter links de resposta ou enviar e-mails de preenchimento.');
+        }
+
+        function showCsvToast() {
+            showToast(currentLang === 'zh' ? 'ℹ️ 下載回應為 .csv 檔為獨立離線分析的最佳考科重點！' : 'ℹ️ Baixar respostas em formato .csv é crucial para análise e arquivamento offline.');
+        }
+
+        function showToolbarToast(action) {
+            const msgs = {
+                zh: {
+                    add: "➕ 新增問題：L1 考試最基本的基礎！",
+                    import: "📄 匯入問題：行政省時神技，一鍵從舊表單撈取題目！",
+                    text: "TT 新增標題：當啟動『隨機題序』時，可用文字說明輔助題組。",
+                    image: "🖼️ 新增圖片：適合低年級看圖選字、理化電路看圖出題！",
+                    video: "🎥 新增影片：直覺嵌入 YouTube，打造『看完影片立即作答』的翻轉教材！",
+                    section: "🥞 新增區段：配合隨機題序的『黃金分頁法』，把姓名座號獨立防亂跑的關鍵！"
+                },
+                pt: {
+                    add: "➕ Adicionar Pergunta: A base operacional mais importante da L1!",
+                    import: "📄 Importar Perguntas: Economia de tempo incrível! Puxe perguntas de outros formulários.",
+                    text: "TT Adicionar Título: Muito útil para agrupar e organizar instruções no formulário.",
+                    image: "🖼️ Adicionar Imagem: Ótimo para avaliações visuais ou gráficos explicativos.",
+                    video: "🎥 Adicionar Vídeo: Integre vídeos do YouTube para criar exercícios interativos.",
+                    section: "🥞 Adicionar Seção: O segredo para criar seções independentes e ordenar questões de forma inteligente!"
+                }
+            };
+            showToast(msgs[currentLang][action]);
+        }
+
+        // ========================================================
+        // 🎆 HTML5 2D 物理粒子煙火特效引擎
+        // ========================================================
+        let fireworksActive = false;
+        const canvas = document.getElementById("fireworks-canvas");
+        const ctx = canvas.getContext("2d");
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.radius = Math.random() * 3 + 2;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 6 + 4;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.alpha = 1;
+                this.decay = Math.random() * 0.015 + 0.015;
+                this.gravity = 0.06;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += this.gravity;
+                this.alpha -= this.decay;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.alpha;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function createExplosion(x, y) {
+            const colors = ['#a855f7', '#6366f1', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            for (let i = 0; i < 60; i++) {
+                particles.push(new Particle(x, y, color));
+            }
+        }
+
+        function animateFireworks() {
+            if (!fireworksActive) return;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles = particles.filter(p => p.alpha > 0);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            if (Math.random() < 0.06) {
+                createExplosion(Math.random() * canvas.width, Math.random() * canvas.height * 0.6);
+            }
+
+            requestAnimationFrame(animateFireworks);
+        }
+
+        // 啟動全通關慶祝
+        function startVictoryCelebration() {
+            resizeCanvas();
+            canvas.classList.remove("hidden");
+            fireworksActive = true;
+            animateFireworks();
+
+            createExplosion(canvas.width / 2, canvas.height / 3);
+            createExplosion(canvas.width * 0.3, canvas.height / 2);
+            createExplosion(canvas.width * 0.7, canvas.height / 2);
+
+            showToast(currentLang === 'zh' ? "🎉 恭喜全部防雷挑戰成功！大匯流入口已開啟！" : "🎉 Parabéns! Desafio concluído com sucesso! Portal aberto!");
+            setTimeout(() => {
+                toggleSurveyModal(true);
+            }, 800);
+        }
+
+        function toggleSurveyModal(show) {
+            document.getElementById("survey-modal").classList.toggle("hidden", !show);
+            if (!show) {
+                fireworksActive = false;
+                canvas.classList.add("hidden");
+                particles = [];
+            }
+        }
+
+        // ========================================================
+        // 真實發送：研習問卷大匯流 (安全防護不含 alert)
+        // ========================================================
         function submitRealSurvey(event) {
             event.preventDefault();
             const btn = document.getElementById("submit-survey-btn");
@@ -1532,12 +1830,6 @@
                 toast.classList.remove("translate-y-0", "opacity-100");
                 toast.classList.add("translate-y-20", "opacity-0");
             }, 4500);
-        }
-
-        // 智慧提示
-        function toggleMockSheetsModal(show) {
-            const modal = document.getElementById("mock-sheets-modal");
-            if (modal) modal.classList.toggle("hidden", !show);
         }
 
         // 初始化視窗監聽
